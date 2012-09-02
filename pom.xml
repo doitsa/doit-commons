@@ -21,4 +21,10 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<scm>
+        <connection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</connection>
+        <url>scm:git:ssh://git@github.com/doitsa/doit-commons.git</url>
+        <developerConnection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</developerConnection>
+    </scm>
 </project>
