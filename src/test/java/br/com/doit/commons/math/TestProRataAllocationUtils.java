@@ -148,6 +148,21 @@ public class TestProRataAllocationUtils {
     }
 
     @Test
+    public void distributeRemainderWhenRemainderGreaterThanFractionWithOneQuantity() throws Exception {
+        Fraction fraction = addFraction(ONE, new BigDecimal("0.01"));
+        Fraction fraction2 = addFraction(ONE, new BigDecimal("39.89"));
+        Fraction fraction3 = addFraction(ONE, new BigDecimal("0.01"));
+        Fraction fraction4 = addFraction(ONE, new BigDecimal("39.89"));
+
+        MathUtils.distribute(new BigDecimal("70")).over(whole);
+
+        verify(fraction).setShare(new BigDecimal("0.01"));
+        verify(fraction2).setShare(new BigDecimal("35.00"));
+        verify(fraction3).setShare(new BigDecimal("0.00"));
+        verify(fraction4).setShare(new BigDecimal("34.99"));
+    }
+
+    @Test
     public void ignoreRemainderWhenFractionHasNoDivisableQuantity() throws Exception {
         Fraction fraction = addFraction(new BigDecimal("13"), new BigDecimal("100000"));
         Fraction fraction2 = addFraction(new BigDecimal("13"), new BigDecimal("100000"));

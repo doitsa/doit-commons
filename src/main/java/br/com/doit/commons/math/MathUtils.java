@@ -81,9 +81,9 @@ public class MathUtils {
             Map<Fraction, BigDecimal> shares = new HashMap<Fraction, BigDecimal>(whole.size());
 
             for (Fraction fraction : whole) {
-                BigDecimal ration = amount.multiply(fraction.value()).divide(total, 2, RoundingMode.FLOOR);
+                BigDecimal ratio = amount.multiply(fraction.value()).divide(total, 2, RoundingMode.FLOOR);
 
-                BigDecimal share = ration.multiply(fraction.quantity());
+                BigDecimal share = ratio.multiply(fraction.quantity());
 
                 shares.put(fraction, share);
 
@@ -96,9 +96,19 @@ public class MathUtils {
                 BigDecimal share = shares.get(fraction);
 
                 if (isRemainderDivisibleByQuantity(remainder, fraction.quantity()) || mode == IGNORING_QUANTITY) {
-                    share = share.add(remainder);
+                    BigDecimal subtotal = fraction.value().multiply(fraction.quantity());
 
-                    remainder = ZERO;
+                    BigDecimal available = subtotal.subtract(share);
+
+                    if (remainder.compareTo(available) > 0) {
+                        remainder = remainder.subtract(available);
+
+                        share = subtotal;
+                    } else {
+                        share = share.add(remainder);
+
+                        remainder = ZERO;
+                    }
                 }
 
                 fraction.setShare(share);
