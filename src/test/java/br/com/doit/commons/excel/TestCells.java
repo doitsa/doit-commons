@@ -1,6 +1,5 @@
 package br.com.doit.commons.excel;
 
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -55,7 +54,7 @@ public class TestCells {
 
         NSTimestamp result = Cells.toObject(cell, NSTimestamp.class);
 
-        assertThat(result, is(date));
+        assertThat(result, is(new NSTimestamp(date)));
     }
 
     @Test
