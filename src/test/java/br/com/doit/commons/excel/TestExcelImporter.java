@@ -1,6 +1,5 @@
 package br.com.doit.commons.excel;
 
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -38,11 +37,15 @@ public class TestExcelImporter {
         assertThat(result.containsKey("AMOUNT"), is(true));
         assertThat(result.containsKey("DATE"), is(true));
         assertThat(result.containsKey("CURRENCY"), is(true));
+        assertThat(result.containsKey("BOOLEAN"), is(true));
+
+        NSTimestamp expectedDate = new NSTimestamp(new LocalDate(2014, 10, 10).toDateTimeAtStartOfDay().toDate());
 
         assertThat(result.get("NAME"), is((Object) "John Doe"));
         assertThat(result.get("AMOUNT"), is((Object) 123));
-        assertThat(result.get("DATE"), is((Object) new NSTimestamp(new LocalDate(2014, 10, 10).toDateTimeAtStartOfDay().toDate())));
+        assertThat(result.get("DATE"), is((Object) expectedDate));
         assertThat(result.get("CURRENCY"), is((Object) new BigDecimal("1500.5")));
+        assertThat(result.get("BOOLEAN"), is((Object) true));
     }
 
     @Test
@@ -122,6 +125,7 @@ public class TestExcelImporter {
         config.put("AMOUNT", Integer.class);
         config.put("DATE", NSTimestamp.class);
         config.put("CURRENCY", BigDecimal.class);
+        config.put("BOOLEAN", Boolean.class);
 
         importer = new ExcelImporter(config);
     }

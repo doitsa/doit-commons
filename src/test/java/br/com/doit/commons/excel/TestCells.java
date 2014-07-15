@@ -37,6 +37,46 @@ public class TestCells {
     }
 
     @Test
+    public void returnBooleanWhenConvertingToBooleanWithCustomString() throws Exception {
+        Object[][] parameters = {
+                { "yes", true },
+                { "sim", true },
+                { "verdadeiro", true },
+                { "TRUE", true },
+                { "no", false },
+                { "nao", false },
+                { "falso", false },
+                { "não", false },
+                { "FALSE", false }
+        };
+
+        when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+
+        for (Object[] parameter : parameters) {
+            when(cell.getStringCellValue()).thenReturn((String) parameter[0]);
+
+            Boolean result = Cells.toBoolean(cell);
+
+            assertThat(parameter[0] + " deveria ser " + parameter[1], result, is(parameter[1]));
+        }
+    }
+
+    @Test
+    public void returnFalseBooleanWhenConvertingToObjectWithTypeBoolean() throws Exception {
+        when(cell.getBooleanCellValue()).thenReturn(false);
+        when(cell.getNumericCellValue()).thenReturn(0.0);
+        when(cell.getStringCellValue()).thenReturn("false");
+
+        Object[][] parameters = {
+                { Cell.CELL_TYPE_BOOLEAN, false },
+                { Cell.CELL_TYPE_NUMERIC, false },
+                { Cell.CELL_TYPE_STRING, false }
+        };
+
+        verifyObjectConversion(Boolean.class, parameters);
+    }
+
+    @Test
     public void returnIntegerWhenConvertingToObjectWithTypeInteger() throws Exception {
         Object[][] parameters = {
                 { Cell.CELL_TYPE_BOOLEAN, 0 },
@@ -81,7 +121,8 @@ public class TestCells {
                 String.class,
                 Integer.class,
                 BigDecimal.class,
-                NSTimestamp.class
+                NSTimestamp.class,
+                Boolean.class
         };
 
         for (Class<?> type : types) {
@@ -100,6 +141,21 @@ public class TestCells {
         };
 
         verifyObjectConversion(String.class, parameters);
+    }
+
+    @Test
+    public void returnTrueBooleanWhenConvertingToObjectWithTypeBoolean() throws Exception {
+        when(cell.getBooleanCellValue()).thenReturn(true);
+        when(cell.getNumericCellValue()).thenReturn(1.0);
+        when(cell.getStringCellValue()).thenReturn("true");
+
+        Object[][] parameters = {
+                { Cell.CELL_TYPE_BOOLEAN, true },
+                { Cell.CELL_TYPE_NUMERIC, true },
+                { Cell.CELL_TYPE_STRING, true }
+        };
+
+        verifyObjectConversion(Boolean.class, parameters);
     }
 
     @Before

@@ -1,9 +1,14 @@
 package br.com.doit.commons.excel;
 
+import static br.com.doit.commons.text.TextNormalizerUtils.toAscii;
 import static org.apache.commons.lang.BooleanUtils.toIntegerObject;
+import static org.apache.commons.lang.StringUtils.lowerCase;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -16,6 +21,21 @@ import com.webobjects.foundation.NSTimestamp;
  * @see Cell
  */
 public class Cells {
+    private static final Map<String, Boolean> BOOLEAN_MAPPING;
+
+    static {
+        BOOLEAN_MAPPING = new HashMap<>(8);
+
+        BOOLEAN_MAPPING.put("true", true);
+        BOOLEAN_MAPPING.put("yes", true);
+        BOOLEAN_MAPPING.put("sim", true);
+        BOOLEAN_MAPPING.put("verdadeiro", true);
+        BOOLEAN_MAPPING.put("false", false);
+        BOOLEAN_MAPPING.put("no", false);
+        BOOLEAN_MAPPING.put("nao", false);
+        BOOLEAN_MAPPING.put("falso", false);
+    }
+
     /**
      * Verifica se o valor de uma célula do Excel é nulo ou vazio.
      * 
@@ -48,6 +68,36 @@ public class Cells {
             return BigDecimal.valueOf(cell.getNumericCellValue());
         case Cell.CELL_TYPE_STRING:
             return new BigDecimal(cell.getStringCellValue());
+        default:
+            throw new UnsupportedOperationException("Tipo de célula não suportado");
+        }
+    }
+
+    /**
+     * Converte o valor de uma célula do Excel para <code>Boolean</code>.
+     * 
+     * @param cell
+     *            Uma célula de uma planilha do Excel.
+     * @return Retorna o valor da célula como <code>Boolean</code>, <code>null</code> caso o valor da célula seja
+     *         vazio ou lança uma exceção caso o tipo de dado na célula não possa ser convertido para
+     *         <code>Boolean</code>.
+     */
+    public static Boolean toBoolean(Cell cell) {
+        if (isNull(cell)) {
+            return null;
+        }
+
+        switch (cell.getCellType()) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            return cell.getBooleanCellValue();
+        case Cell.CELL_TYPE_NUMERIC:
+            return BooleanUtils.toBooleanObject(Double.valueOf(cell.getNumericCellValue()).intValue());
+        case Cell.CELL_TYPE_STRING:
+            String text = toAscii(cell.getStringCellValue());
+
+            text = lowerCase(text);
+
+            return BOOLEAN_MAPPING.get(text);
         default:
             throw new UnsupportedOperationException("Tipo de célula não suportado");
         }
@@ -136,6 +186,10 @@ public class Cells {
      */
     @SuppressWarnings("unchecked")
     public static <T> T toObject(Cell cell, Class<T> type) {
+        if (Boolean.class.isAssignableFrom(type)) {
+            return (T) toBoolean(cell);
+        }
+
         if (Integer.class.isAssignableFrom(type)) {
             return (T) toInteger(cell);
         }
