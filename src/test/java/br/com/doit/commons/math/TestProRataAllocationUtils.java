@@ -190,6 +190,20 @@ public class TestProRataAllocationUtils {
     }
 
     @Test
+    public void distributeRemainderWhenValuesFractionIsLessRemaider() throws Exception {
+        Fraction fraction = addFraction(ONE, new BigDecimal("1.00"));
+        Fraction fraction2 = addFraction(ONE, new BigDecimal("1.00"));
+        Fraction fraction3 = addFraction(ONE, new BigDecimal("1.00"));
+
+        BigDecimal remainder = MathUtils.distribute(new BigDecimal("10.00")).over(whole);
+
+        verify(fraction).setShare(new BigDecimal("3.34"));
+        verify(fraction2).setShare(new BigDecimal("3.33"));
+        verify(fraction3).setShare(new BigDecimal("3.33"));
+        assertThat(remainder, is(ZERO));
+    }
+
+    @Test
     public void returningRemainderWhenFractionHasNoDivisableQuantity() throws Exception {
         Fraction fraction = addFraction(new BigDecimal("13"), new BigDecimal("100000"));
         Fraction fraction2 = addFraction(new BigDecimal("13"), new BigDecimal("100000"));

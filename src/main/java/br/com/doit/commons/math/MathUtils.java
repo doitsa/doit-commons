@@ -94,11 +94,12 @@ public class MathUtils {
                 if (mode != STRICTLY_PROPORTIONAL
                         &&
                         (isRemainderDivisibleByQuantity(remainder, fraction.quantity()) || mode == IGNORING_QUANTITY)) {
+
                     BigDecimal subtotal = fraction.value().multiply(fraction.quantity());
 
                     BigDecimal available = subtotal.subtract(share);
 
-                    if (remainder.compareTo(available) > 0) {
+                    if (available.compareTo(ZERO) > 0 && remainder.compareTo(available) > 0) {
                         remainder = remainder.subtract(available);
 
                         share = subtotal;
