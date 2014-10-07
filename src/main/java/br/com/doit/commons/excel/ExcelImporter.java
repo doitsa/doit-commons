@@ -23,6 +23,15 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
 public class ExcelImporter {
+    private static final class ClearDataMaker {
+        @Override
+        public String toString() {
+            return "-";
+        }
+    }
+
+    public static final Object CLEAR_DATA_MARKER = new ClearDataMaker();
+
     private static boolean isEmptyRow(Row row) {
         Iterator<Cell> cellIterator = row.cellIterator();
 
@@ -47,6 +56,14 @@ public class ExcelImporter {
      */
     public ExcelImporter(Map<String, Class<?>> config) {
         this.config = config;
+    }
+
+    private Object extractCellValue(Cell cell, String columnName) {
+        if (cell.getCellType() == Cell.CELL_TYPE_STRING && "-".equals(cell.getStringCellValue())) {
+            return CLEAR_DATA_MARKER;
+        }
+
+        return Cells.toObject(cell, config.get(columnName));
     }
 
     /**
@@ -101,7 +118,9 @@ public class ExcelImporter {
 
                     String columnName = columnNames.get(i);
 
-                    convertedRow.put(columnName, Cells.toObject(cell, config.get(columnName)));
+                    Object value = extractCellValue(cell, columnName);
+
+                    convertedRow.put(columnName, value);
                 }
 
                 convertedRows.add(convertedRow);

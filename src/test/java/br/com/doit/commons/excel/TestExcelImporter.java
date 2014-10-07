@@ -28,6 +28,25 @@ public class TestExcelImporter {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
+    public void extractClearDataMarkerWhenProcessingSpreadsheet() throws Exception {
+        URL url = getClass().getResource("/importer/clear_data_syntax.xlsx");
+
+        Map<String, Object> result = importer.extractRows(url).get(0);
+
+        assertThat(result.containsKey("NAME"), is(true));
+        assertThat(result.containsKey("AMOUNT"), is(true));
+        assertThat(result.containsKey("DATE"), is(true));
+        assertThat(result.containsKey("CURRENCY"), is(true));
+        assertThat(result.containsKey("BOOLEAN"), is(true));
+
+        assertThat(result.get("NAME"), is(ExcelImporter.CLEAR_DATA_MARKER));
+        assertThat(result.get("AMOUNT"), is(ExcelImporter.CLEAR_DATA_MARKER));
+        assertThat(result.get("DATE"), is(ExcelImporter.CLEAR_DATA_MARKER));
+        assertThat(result.get("CURRENCY"), is(ExcelImporter.CLEAR_DATA_MARKER));
+        assertThat(result.get("BOOLEAN"), is(ExcelImporter.CLEAR_DATA_MARKER));
+    }
+
+    @Test
     public void extractDataUsingTheCorrectDataTypeWhenProcessingSpreadsheet() throws Exception {
         URL url = getClass().getResource("/importer/multi_types.xlsx");
 
