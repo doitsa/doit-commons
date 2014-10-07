@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>doit-commons</artifactId>
-	<version>0.7</version>
+	<version>0.8-SNAPSHOT</version>
 	<name>DOit Commons Framework</name>
 	<description>Framework que contém funcionalidades comuns utilizadas em vários projetos da DOit.</description>
 
@@ -61,6 +61,6 @@
         <connection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</connection>
         <url>scm:git:ssh://git@github.com/doitsa/doit-commons.git</url>
         <developerConnection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</developerConnection>
-      <tag>doit-commons-0.7</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>
