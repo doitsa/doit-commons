@@ -23,6 +23,29 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
 public class ExcelImporter {
+    /**
+     * Essa classe é capaz de formatar mensagens de erro adicionando informações sobre a linha e a coluna em que o erro
+     * ocorreu. A coluna é convertida para para a letra correspondente em uma planilha do Excel.
+     */
+    protected static class ExcelErrorMessageFormatter {
+        private static String columnNameForIndex(int index) {
+            if (index / 26 == 0) {
+                char column = (char) ('A' + index);
+
+                return String.valueOf(column);
+            }
+
+            return columnNameForIndex((index / 26) - 1) + columnNameForIndex((index % 26));
+        }
+
+        protected static String format(String message, Cell cell) {
+            int row = cell.getRowIndex() + 1;
+            String column = columnNameForIndex(cell.getColumnIndex());
+
+            return String.format("%s (linha %d, coluna %s)", message, row, column);
+        }
+    }
+
     private static final class ClearDataMaker {
         @Override
         public String toString() {
@@ -63,7 +86,13 @@ public class ExcelImporter {
             return CLEAR_DATA_MARKER;
         }
 
-        return Cells.toObject(cell, config.get(columnName));
+        try {
+            return Cells.toObject(cell, config.get(columnName));
+        } catch (Exception exception) {
+            String message = ExcelErrorMessageFormatter.format(exception.getMessage(), cell);
+
+            throw new ExcelImporterException(message, exception);
+        }
     }
 
     /**

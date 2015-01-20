@@ -150,6 +150,16 @@ public class TestExcelImporter {
     }
 
     @Test
+    public void includeCellPositingWhenThrowingExceptionForInvalidValue() throws Exception {
+        URL url = getClass().getResource("/importer/invalid_value.xlsx");
+
+        thrown.expect(ExcelImporterException.class);
+        thrown.expectMessage(is("Tipo de célula não suportado (linha 2, coluna B)"));
+
+        importer.extractRows(url);
+    }
+
+    @Test
     public void throwExceptionWhenProcessingSpreadsheetWithInvalidColumn() throws Exception {
         URL url = getClass().getResource("/importer/invalid_column.xlsx");
 
