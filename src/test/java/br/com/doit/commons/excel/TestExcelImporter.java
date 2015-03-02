@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.HashMap;
@@ -78,6 +79,15 @@ public class TestExcelImporter {
 
         assertThat(result.get("NAME"), is((Object) "John Doe"));
         assertThat(result.get("AMOUNT"), is((Object) 123));
+    }
+
+    @Test
+    public void extractOneLineFromInputStreamWhenProcessingSpreadsheet() throws Exception {
+        InputStream input = getClass().getResourceAsStream("/importer/one_line.xlsx");
+
+        List<Map<String, Object>> result = importer.extractRows(input);
+
+        assertThat(result.size(), is(1));
     }
 
     @Test

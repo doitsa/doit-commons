@@ -105,6 +105,22 @@ public class ExcelImporter {
      */
     public List<Map<String, Object>> extractRows(URL spreadsheetUrl) {
         try (InputStream input = spreadsheetUrl.openStream()) {
+            return extractRows(input);
+        } catch (IOException exception) {
+            throw new ExcelImporterException(exception);
+        }
+    }
+
+    /**
+     * Extrai as linhas de uma planilha do Excel como uma lista de <code>Map</code>s de acordo com as configurações
+     * passadas por parâmetro.
+     *
+     * @param input
+     *            O input stream de onde a planilha será lida
+     * @return Retorna uma lista de <code>Map</code>s contendo os dados das linhas da planilha.
+     */
+    public List<Map<String, Object>> extractRows(InputStream input) {
+        try {
             Workbook workbook = WorkbookFactory.create(input);
 
             Sheet sheet = workbook.getSheetAt(0);
@@ -156,7 +172,7 @@ public class ExcelImporter {
             }
 
             return convertedRows;
-        } catch (IOException | InvalidFormatException exception) {
+        } catch (InvalidFormatException | IOException exception) {
             throw new ExcelImporterException(exception);
         }
     }
