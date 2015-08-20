@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -44,5 +45,13 @@ public class TestBigDecimalCollectors {
 
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), is(new BigDecimal("5.5")));
+    }
+
+    @Test
+    public void roundValueWhenAveragingWithScaleAndRoundMode() throws Exception {
+        Optional<BigDecimal> result = Stream.of(new BigDecimal("0.4"), new BigDecimal("0.3")).collect(averaging().withScale(1, RoundingMode.HALF_EVEN));
+
+        assertThat(result.isPresent(), is(true));
+        assertThat(result.get(), is(new BigDecimal("0.4")));
     }
 }
