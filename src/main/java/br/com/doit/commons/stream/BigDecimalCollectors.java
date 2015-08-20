@@ -11,42 +11,40 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import br.com.doit.commons.stream.BigDecimalCollectors.BigDecimalAveragingCollector.AverageAccumulator;
-
 /**
  * Implementações da classe {@link Collector} com funcionalidades relacionadas à classe {@code BigDecimal}.
  *
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
 public class BigDecimalCollectors {
-    public static class BigDecimalAveragingCollector implements BigDecimalCollector<AverageAccumulator> {
-        class AverageAccumulator {
-            public int count;
-            public BigDecimal amount;
+    static class AverageAccumulator {
+        public int count;
+        public BigDecimal amount;
 
-            public AverageAccumulator() {
-                this(0, BigDecimal.ZERO);
-            }
-
-            public AverageAccumulator(int count, BigDecimal amount) {
-                this.count = count;
-                this.amount = amount;
-            }
-
-            public void add(BigDecimal amount) {
-                count++;
-                this.amount = this.amount.add(amount);
-            }
-
-            public Optional<BigDecimal> average() {
-                if (count == 0) {
-                    return Optional.empty();
-                }
-
-                return Optional.of(amount.divide(new BigDecimal(count)));
-            }
+        public AverageAccumulator() {
+            this(0, BigDecimal.ZERO);
         }
 
+        public AverageAccumulator(int count, BigDecimal amount) {
+            this.count = count;
+            this.amount = amount;
+        }
+
+        public void add(BigDecimal amount) {
+            count++;
+            this.amount = this.amount.add(amount);
+        }
+
+        public Optional<BigDecimal> average() {
+            if (count == 0) {
+                return Optional.empty();
+            }
+
+            return Optional.of(amount.divide(new BigDecimal(count)));
+        }
+    }
+
+    public static class BigDecimalAveragingCollector implements BigDecimalCollector<AverageAccumulator> {
         @Override
         public Supplier<AverageAccumulator> supplier() {
             return AverageAccumulator::new;
