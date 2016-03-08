@@ -224,6 +224,18 @@ public class TestProRataAllocationUtils {
         assertThat(remainder, is(ZERO));
     }
 
+    @Test
+    public void roundShareWhenDistributingDecimalFractions() throws Exception {
+        Fraction fraction = addFraction(new BigDecimal("3.41"), new BigDecimal("1404.37"));
+        Fraction fraction2 = addFraction(new BigDecimal("26.59"), new BigDecimal("1404.37"));
+
+        BigDecimal remainder = MathUtils.distribute(new BigDecimal("3539"), IGNORING_QUANTITY).over(whole);
+
+        verify(fraction).setShare(new BigDecimal("402.44"));
+        verify(fraction2).setShare(new BigDecimal("3136.56"));
+        assertThat(remainder, is(ZERO));
+    }
+
     @Before
     public void setup() {
         whole = new ArrayList<Fraction>();

@@ -79,7 +79,7 @@ public class MathUtils {
             for (Fraction fraction : whole) {
                 BigDecimal ratio = amount.multiply(fraction.value()).divide(total, 2, RoundingMode.FLOOR);
 
-                BigDecimal share = ratio.multiply(fraction.quantity());
+                BigDecimal share = ratio.multiply(fraction.quantity()).setScale(2, RoundingMode.HALF_EVEN);
 
                 shares.put(fraction, share);
 
