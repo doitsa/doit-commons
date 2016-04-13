@@ -1,6 +1,10 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
+encoding//src/main/resources/br/com/doit/commons/excel/messages.properties=ISO-8859-1
+encoding//src/main/resources/br/com/doit/commons/excel/messages_pt_BR.properties=ISO-8859-1
 encoding//src/test/java=UTF-8
 encoding//src/test/resources=UTF-8
+encoding//src/test/resources/br/com/doit/commons/test/messages.properties=ISO-8859-1
+encoding//src/test/resources/br/com/doit/commons/test/messages_fr.properties=ISO-8859-1
 encoding/<project>=UTF-8
