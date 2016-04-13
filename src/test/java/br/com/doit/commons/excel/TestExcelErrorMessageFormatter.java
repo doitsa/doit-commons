@@ -23,7 +23,7 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna A)"));
+        assertThat(result, is("message (line 1, column A)"));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna Z)"));
+        assertThat(result, is("message (line 1, column Z)"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna AA)"));
+        assertThat(result, is("message (line 1, column AA)"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna AZ)"));
+        assertThat(result, is("message (line 1, column AZ)"));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna BA)"));
+        assertThat(result, is("message (line 1, column BA)"));
     }
 
     @Test
@@ -83,6 +83,6 @@ public class TestExcelErrorMessageFormatter {
 
         String result = ExcelErrorMessageFormatter.format("message", cell);
 
-        assertThat(result, is("message (linha 1, coluna AAA)"));
+        assertThat(result, is("message (line 1, column AAA)"));
     }
 }

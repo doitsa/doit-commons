@@ -14,13 +14,19 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import com.webobjects.foundation.NSTimestamp;
 
+import br.com.doit.commons.l10n.Messages;
+
 /**
  * Classe utilitária com métodos auxiliares para manipular células de uma planilha do Excel.
  * 
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  * @see Cell
  */
-public class Cells {
+class Cells {
+    private static final String UNSUPPORTED_CELL_TYPE = "UNSUPPORTED_CELL_TYPE";
+
+    private static final Messages messages = Messages.getMessages("br/com/doit/commons/excel/messages");
+
     private static final Map<String, Boolean> BOOLEAN_MAPPING;
 
     static {
@@ -62,14 +68,14 @@ public class Cells {
         }
 
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
-            return BigDecimal.valueOf(toInteger(cell));
-        case Cell.CELL_TYPE_NUMERIC:
-            return BigDecimal.valueOf(cell.getNumericCellValue());
-        case Cell.CELL_TYPE_STRING:
-            return new BigDecimal(cell.getStringCellValue());
-        default:
-            throw new UnsupportedOperationException("Tipo de célula não suportado");
+            case Cell.CELL_TYPE_BOOLEAN:
+                return BigDecimal.valueOf(toInteger(cell));
+            case Cell.CELL_TYPE_NUMERIC:
+                return BigDecimal.valueOf(cell.getNumericCellValue());
+            case Cell.CELL_TYPE_STRING:
+                return new BigDecimal(cell.getStringCellValue());
+            default:
+                throw new UnsupportedOperationException(messages.get(UNSUPPORTED_CELL_TYPE));
         }
     }
 
@@ -88,18 +94,18 @@ public class Cells {
         }
 
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
-            return cell.getBooleanCellValue();
-        case Cell.CELL_TYPE_NUMERIC:
-            return BooleanUtils.toBooleanObject(Double.valueOf(cell.getNumericCellValue()).intValue());
-        case Cell.CELL_TYPE_STRING:
-            String text = toAscii(cell.getStringCellValue());
+            case Cell.CELL_TYPE_BOOLEAN:
+                return cell.getBooleanCellValue();
+            case Cell.CELL_TYPE_NUMERIC:
+                return BooleanUtils.toBooleanObject(Double.valueOf(cell.getNumericCellValue()).intValue());
+            case Cell.CELL_TYPE_STRING:
+                String text = toAscii(cell.getStringCellValue());
 
-            text = lowerCase(text);
+                text = lowerCase(text);
 
-            return BOOLEAN_MAPPING.get(text);
-        default:
-            throw new UnsupportedOperationException("Tipo de célula não suportado");
+                return BOOLEAN_MAPPING.get(text);
+            default:
+                throw new UnsupportedOperationException(messages.get(UNSUPPORTED_CELL_TYPE));
         }
     }
 
@@ -134,14 +140,14 @@ public class Cells {
         }
 
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
-            return toIntegerObject(cell.getBooleanCellValue());
-        case Cell.CELL_TYPE_NUMERIC:
-            return Double.valueOf(cell.getNumericCellValue()).intValue();
-        case Cell.CELL_TYPE_STRING:
-            return Integer.parseInt(cell.getStringCellValue());
-        default:
-            throw new UnsupportedOperationException("Tipo de célula não suportado");
+            case Cell.CELL_TYPE_BOOLEAN:
+                return toIntegerObject(cell.getBooleanCellValue());
+            case Cell.CELL_TYPE_NUMERIC:
+                return Double.valueOf(cell.getNumericCellValue()).intValue();
+            case Cell.CELL_TYPE_STRING:
+                return Integer.parseInt(cell.getStringCellValue());
+            default:
+                throw new UnsupportedOperationException(messages.get(UNSUPPORTED_CELL_TYPE));
         }
     }
 
@@ -149,14 +155,14 @@ public class Cells {
      * Converte o valor de uma célula do Excel e retorna um objeto de acordo com o seu tipo.
      * 
      * <pre>
-     * <b>Tipo da Célula</b>    <b>Tipo do Objeto Retornado</b>
-     * Campo Texto              <code>java.lang.String</code>
-     * Campo Numérico           <code>java.lang.Double</code>
-     * 
+     * <b>Tipo da Célula</b> <b>Tipo do Objeto Retornado</b>
+     * Campo Texto <code>java.lang.String</code>
+     * Campo Numérico <code>java.lang.Double</code>
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula de acordo com o seu tipo ou lança uma exceção caso o tipo de dado na célula não
-     * seja suportado.
+     *         seja suportado.
      */
     @SuppressWarnings("unchecked")
     public static <T> T toObject(Cell cell) {
@@ -165,12 +171,12 @@ public class Cells {
         }
 
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_STRING:
-            return (T) toString(cell);
-        case Cell.CELL_TYPE_NUMERIC:
-            return (T) new Double(cell.getNumericCellValue());
-        default:
-            throw new UnsupportedOperationException("Tipo de célula não suportado");
+            case Cell.CELL_TYPE_STRING:
+                return (T) toString(cell);
+            case Cell.CELL_TYPE_NUMERIC:
+                return (T) new Double(cell.getNumericCellValue());
+            default:
+                throw new UnsupportedOperationException(messages.get(UNSUPPORTED_CELL_TYPE));
         }
     }
 
@@ -221,19 +227,19 @@ public class Cells {
         String value;
 
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
-            value = ((Boolean) cell.getBooleanCellValue()).toString();
-            break;
-        case Cell.CELL_TYPE_STRING:
-            value = cell.getStringCellValue();
-            break;
+            case Cell.CELL_TYPE_BOOLEAN:
+                value = ((Boolean) cell.getBooleanCellValue()).toString();
+                break;
+            case Cell.CELL_TYPE_STRING:
+                value = cell.getStringCellValue();
+                break;
 
-        case Cell.CELL_TYPE_NUMERIC:
-            value = new BigDecimal(cell.getNumericCellValue()).toPlainString();
-            break;
+            case Cell.CELL_TYPE_NUMERIC:
+                value = new BigDecimal(cell.getNumericCellValue()).toPlainString();
+                break;
 
-        default:
-            value = null;
+            default:
+                value = null;
         }
 
         return StringUtils.trimToNull(value);

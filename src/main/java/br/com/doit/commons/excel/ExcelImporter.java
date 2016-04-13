@@ -16,18 +16,24 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import br.com.doit.commons.l10n.Messages;
+
 /**
  * Importador de dados de uma planilha do Excel permite extrair as linhas de uma planilha como objetos de tipos comuns
  * como String, Integer, BigDecimal e etc.
- * 
+ *
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
 public class ExcelImporter {
+    private static final Messages messages = Messages.getMessages("br/com/doit/commons/excel/messages");
+
     /**
      * Essa classe é capaz de formatar mensagens de erro adicionando informações sobre a linha e a coluna em que o erro
      * ocorreu. A coluna é convertida para para a letra correspondente em uma planilha do Excel.
      */
     protected static class ExcelErrorMessageFormatter {
+        private static final String MESSAGE_WITH_LINE_AND_COLUMN = "MESSAGE_WITH_LINE_AND_COLUMN";
+
         private static String columnNameForIndex(int index) {
             if (index / 26 == 0) {
                 char column = (char) ('A' + index);
@@ -42,7 +48,7 @@ public class ExcelImporter {
             int row = cell.getRowIndex() + 1;
             String column = columnNameForIndex(cell.getColumnIndex());
 
-            return String.format("%s (linha %d, coluna %s)", message, row, column);
+            return messages.format(MESSAGE_WITH_LINE_AND_COLUMN, message, row, column);
         }
     }
 
@@ -52,6 +58,8 @@ public class ExcelImporter {
             return "-";
         }
     }
+
+    private static final String UNRECOGNISABLE_COLUMN = "UNRECOGNISABLE_COLUMN";
 
     public static final Object CLEAR_DATA_MARKER = new ClearDataMaker();
 
@@ -140,7 +148,7 @@ public class ExcelImporter {
                     String columnName = cell.getStringCellValue();
 
                     if (!config.containsKey(columnName)) {
-                        throw new ExcelImporterException("A coluna '" + columnName + "' não é uma coluna reconhecida");
+                        throw new ExcelImporterException(messages.format(UNRECOGNISABLE_COLUMN, columnName));
                     }
 
                     columnNames.add(columnName);
