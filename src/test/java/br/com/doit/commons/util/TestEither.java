@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,8 +18,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
-
-import br.com.doit.commons.util.Either.Function;
 
 /**
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
@@ -30,60 +29,60 @@ public class TestEither {
         Object expectedObject = new Object();
 
         return Arrays.asList(new Object[][] {
-                { "Failure", Either.failure(expectedObject), false, true, null, expectedObject, never(), atLeastOnce() },
-                { "Success", Either.success(expectedObject), true, false, expectedObject, null, atLeastOnce(), never() }
+                { "Success", Either.right(expectedObject), true, false, expectedObject, null, atLeastOnce(), never() },
+                { "Failure", Either.left(expectedObject), false, true, null, expectedObject, never(), atLeastOnce() }
         });
     }
 
     private final Either<Object, Object> either;
-    private final Object failure;
-    private final VerificationMode failureFoldingOccurrence;
-    private final boolean isFailure;
-    private final boolean isSuccess;
-    private final Object success;
-    private final VerificationMode successFoldingOccurence;
+    private final Object left;
+    private final VerificationMode leftFoldingOccurrence;
+    private final boolean isLeft;
+    private final boolean isRight;
+    private final Object right;
+    private final VerificationMode rightFoldingOccurence;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    public TestEither(String type, Either<Object, Object> either, boolean isSuccess, boolean isFailure, Object success, Object failure, VerificationMode successFoldingOccurence, VerificationMode failureFoldingOccurrence) {
+    public TestEither(String type, Either<Object, Object> either, boolean isRight, boolean isLeft, Object right, Object left, VerificationMode rightFoldingOccurence, VerificationMode leftFoldingOccurrence) {
         this.either = either;
-        this.isSuccess = isSuccess;
-        this.isFailure = isFailure;
-        this.success = success;
-        this.failure = failure;
-        this.successFoldingOccurence = successFoldingOccurence;
-        this.failureFoldingOccurrence = failureFoldingOccurrence;
+        this.isRight = isRight;
+        this.isLeft = isLeft;
+        this.right = right;
+        this.left = left;
+        this.rightFoldingOccurence = rightFoldingOccurence;
+        this.leftFoldingOccurrence = leftFoldingOccurrence;
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void applyCorrectFunctionWhenFolding() throws Exception {
-        Function<Object> successFunction = mock(Function.class);
-        Function<Object> failureFunction = mock(Function.class);
+        Consumer<Object> leftFunction = mock(Consumer.class);
+        Consumer<Object> rightFunction = mock(Consumer.class);
 
-        either.fold(successFunction, failureFunction);
+        either.fold(leftFunction, rightFunction);
 
-        verify(successFunction, successFoldingOccurence).apply(Mockito.any());
-        verify(failureFunction, failureFoldingOccurrence).apply(Mockito.any());
+        verify(rightFunction, rightFoldingOccurence).accept(Mockito.any());
+        verify(leftFunction, leftFoldingOccurrence).accept(Mockito.any());
     }
 
     @Test
-    public void eitherIsFailureOrIsSuccess() throws Exception {
-        assertThat(either.isFailure(), is(isFailure));
-        assertThat(either.isSuccess(), is(isSuccess));
+    public void eitherIsLeftOrIsRight() throws Exception {
+        assertThat(either.isRight(), is(isRight));
+        assertThat(either.isLeft(), is(isLeft));
     }
 
     @Test
-    public void returnExpectedSuccessOrFailure() throws Exception {
-        assertThat(either.success(), is(success));
-        assertThat(either.failure(), is(failure));
+    public void returnExpectedLeftOrRight() throws Exception {
+        assertThat(either.left(), is(left));
+        assertThat(either.right(), is(right));
     }
 
     @Test
-    public void throwExceptionWhenCreatingEitherWithBothSuccessAndFailureNull() throws Exception {
+    public void throwExceptionWhenCreatingEitherWithBothLeftAndRightNull() throws Exception {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(is("Either must be a success or a failure. Success: null. Failure: null."));
+        thrown.expectMessage(is("Either must have a left or a right. Left: null. Right: null."));
 
-        Either.failure(null);
+        Either.right(null);
     }
 }

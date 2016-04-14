@@ -2,6 +2,8 @@ package br.com.doit.commons.util;
 
 import static org.apache.commons.lang.Validate.isTrue;
 
+import java.util.function.Consumer;
+
 /**
  * Essa classe foi de certa forma inspirada na classe <code>Either</code> de
  * Scala.
@@ -10,56 +12,63 @@ import static org.apache.commons.lang.Validate.isTrue;
  *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  *
- * @param <S>
- *            O tipo do objeto retornado em caso de sucesso
- * @param <F>
- *            O tipo do objeto retornado em caso de falha
+ * @param <L>
+ *            O tipo do objeto normalmente retornado em caso de falha
+ * @param <R>
+ *            O tipo do objeto normalmente retornado em caso de sucesso
  */
-public class Either<S, F> {
-    public static abstract class Function<T> {
-        public abstract void apply(T t);
+public class Either<L, R> {
+    /**
+     * Cria um objeto representando o lado direito (correto) de um {@code Either}.
+     */
+    public static <L, R> Either<L, R> right(R right) {
+        return new Either<L, R>(null, right);
     }
 
-    public static <S, F> Either<S, F> failure(F failure) {
-        return new Either<S, F>(null, failure);
+    /**
+     * Cria um objeto representando o lado esquerdo de um {@code Either}.
+     */
+    public static <L, R> Either<L, R> left(L left) {
+        return new Either<L, R>(left, null);
     }
 
-    public static <S, F> Either<S, F> success(S success) {
-        return new Either<S, F>(success, null);
+    private final L left;
+    private final R right;
+
+    private Either(L left, R right) {
+        isTrue(!(left == null && right == null),
+                "Either must have a left or a right. Left: " + left + ". Right: " + right + ".");
+
+        this.left = left;
+        this.right = right;
     }
 
-    private final F failure;
-    private final S success;
-
-    private Either(S success, F failure) {
-        isTrue(!(success == null && failure == null),
-                "Either must be a success or a failure. Success: " + success + ". Failure: " + failure + ".");
-
-        this.success = success;
-        this.failure = failure;
+    public L left() {
+        return left;
     }
 
-    public F failure() {
-        return failure;
+    public R right() {
+        return right;
     }
 
-    public void fold(Function<S> successFunction, Function<F> failureFunction) {
-        if (failure == null) {
-            successFunction.apply(success);
+    public boolean isRight() {
+        return right != null;
+    }
+
+    public boolean isLeft() {
+        return left != null;
+    }
+
+    /**
+     * Executa a função da esquerda se esse {@code Either} retornar {@code true} para o método {@code isLeft}. Caso
+     * contrário, executa a função da direita se esse {@code Either} retornar {@code true} para o método
+     * {@code isRight}.
+     */
+    public void fold(Consumer<L> leftFunction, Consumer<R> rightFunction) {
+        if (right == null) {
+            leftFunction.accept(left);
         } else {
-            failureFunction.apply(failure);
+            rightFunction.accept(right);
         }
-    }
-
-    public boolean isFailure() {
-        return failure != null;
-    }
-
-    public boolean isSuccess() {
-        return success != null;
-    }
-
-    public S success() {
-        return success;
     }
 }
