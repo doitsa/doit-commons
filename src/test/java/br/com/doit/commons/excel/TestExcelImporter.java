@@ -164,7 +164,7 @@ public class TestExcelImporter {
         URL url = getClass().getResource("/importer/invalid_value.xlsx");
 
         thrown.expect(ExcelImporterException.class);
-        thrown.expectMessage(is("Unsupported cell type (line 2, column B)"));
+        thrown.expectMessage(is("Unsupported cell type (at line 2, column B)."));
 
         importer.extractRows(url);
     }
@@ -174,7 +174,7 @@ public class TestExcelImporter {
         URL url = getClass().getResource("/importer/invalid_column.xlsx");
 
         thrown.expect(ExcelImporterException.class);
-        thrown.expectMessage(is("The column named INVALID is not recognized"));
+        thrown.expectMessage(is("Unknown column named INVALID."));
 
         importer.extractRows(url);
     }
