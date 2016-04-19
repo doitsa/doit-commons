@@ -107,7 +107,7 @@ public class TestMessages {
     }
 
     private void rewriteResourceBundleContent(String content) throws Exception {
-        URL url = getClass().getResource("/br/com/doit/commons/test/messages.properties");
+        URL url = getClass().getResource("/br/com/doit/commons/test/messages_en.properties");
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(url.toURI())));
 
