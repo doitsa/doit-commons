@@ -25,6 +25,10 @@ import java.util.function.Supplier;
  * <p>
  * O {@code Locale} será determnado a cada chamada a um dos métodos para obter uma mensagem.
  * </p>
+ * <p>
+ * Essa classe não é thread safe. Se o {@code Supplier} de {@code Locale} for feito de forma thread safe, no entanto, é
+ * possível evitar condições inesperadas.
+ * </p>
  *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
