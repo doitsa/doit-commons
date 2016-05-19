@@ -54,4 +54,12 @@ public class TestBigDecimalCollectors {
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), is(new BigDecimal("0.4")));
     }
+
+    @Test
+    public void avoidArithmeticExceptionWhenAveragingWithScaleAndRoundMode() throws Exception {
+        Optional<BigDecimal> result = Stream.of(new BigDecimal("2"), new BigDecimal("3"), new BigDecimal("2")).collect(averaging().withScale(1, RoundingMode.HALF_EVEN));
+
+        assertThat(result.isPresent(), is(true));
+        assertThat(result.get(), is(new BigDecimal("2.3")));
+    }
 }

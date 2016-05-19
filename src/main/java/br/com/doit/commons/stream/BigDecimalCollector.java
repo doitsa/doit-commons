@@ -1,8 +1,11 @@
 package br.com.doit.commons.stream;
 
+import static java.util.stream.Collectors.collectingAndThen;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
@@ -14,7 +17,9 @@ import java.util.stream.Collector;
  * @param <A>
  *            o tipo do acumulador que é usado nas operações de redução.
  */
-public interface BigDecimalCollector<A> extends Collector<BigDecimal, A, Optional<BigDecimal>> {
+public abstract class BigDecimalCollector<A> implements Collector<BigDecimal, A, Optional<BigDecimal>> {
+    private BinaryOperator<BigDecimal> divide = (dividend, divisor) -> dividend.divide(divisor);
+
     /**
      * Retorna um {@code Collector} que vai arredondar o valor determinado de acordo com a escala e o método de
      * arredondamento.
@@ -25,9 +30,17 @@ public interface BigDecimalCollector<A> extends Collector<BigDecimal, A, Optiona
      *            O método de arredondamento que será aplicado.
      * @return Retorna um {@code Collector} capaz de arredondar o valor retornado pela operação anterior.
      */
-    public default Collector<BigDecimal, A, Optional<BigDecimal>> withScale(int scale, RoundingMode roundingMode) {
+    public Collector<BigDecimal, A, Optional<BigDecimal>> withScale(int scale, RoundingMode roundingMode) {
         Function<Optional<BigDecimal>, Optional<BigDecimal>> rounding = o -> o.map(v -> v.setScale(scale, roundingMode));
 
-        return new FinisherCollectorDecorator<>(this, rounding);
+        // Isso é necessário pois uma divisão que gere uma dízima periódica deve ser arredondada no momento da divisão e
+        // não depois
+        divide = (dividend, divisor) -> dividend.divide(divisor, scale, roundingMode);
+
+        return collectingAndThen(this, rounding);
+    }
+
+    protected BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
+        return divide.apply(dividend, divisor);
     }
 }

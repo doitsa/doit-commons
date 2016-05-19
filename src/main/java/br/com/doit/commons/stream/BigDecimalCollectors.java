@@ -17,15 +17,15 @@ import java.util.stream.Collector;
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
 public class BigDecimalCollectors {
-    static class AverageAccumulator {
+    static class BigDecimalAccumulator {
         public int count;
         public BigDecimal amount;
 
-        public AverageAccumulator() {
+        public BigDecimalAccumulator() {
             this(0, BigDecimal.ZERO);
         }
 
-        public AverageAccumulator(int count, BigDecimal amount) {
+        public BigDecimalAccumulator(int count, BigDecimal amount) {
             this.count = count;
             this.amount = amount;
         }
@@ -34,35 +34,33 @@ public class BigDecimalCollectors {
             count++;
             this.amount = this.amount.add(amount);
         }
-
-        public Optional<BigDecimal> average() {
-            if (count == 0) {
-                return Optional.empty();
-            }
-
-            return Optional.of(amount.divide(new BigDecimal(count)));
-        }
     }
 
-    public static class BigDecimalAveragingCollector implements BigDecimalCollector<AverageAccumulator> {
+    public static class BigDecimalAveragingCollector extends BigDecimalCollector<BigDecimalAccumulator> {
         @Override
-        public Supplier<AverageAccumulator> supplier() {
-            return AverageAccumulator::new;
+        public Supplier<BigDecimalAccumulator> supplier() {
+            return BigDecimalAccumulator::new;
         }
 
         @Override
-        public BiConsumer<AverageAccumulator, BigDecimal> accumulator() {
-            return AverageAccumulator::add;
+        public BiConsumer<BigDecimalAccumulator, BigDecimal> accumulator() {
+            return BigDecimalAccumulator::add;
         }
 
         @Override
-        public BinaryOperator<AverageAccumulator> combiner() {
-            return (a1, a2) -> new AverageAccumulator(a1.count + a2.count, a1.amount.add(a2.amount));
+        public BinaryOperator<BigDecimalAccumulator> combiner() {
+            return (a1, a2) -> new BigDecimalAccumulator(a1.count + a2.count, a1.amount.add(a2.amount));
         }
 
         @Override
-        public Function<AverageAccumulator, Optional<BigDecimal>> finisher() {
-            return AverageAccumulator::average;
+        public Function<BigDecimalAccumulator, Optional<BigDecimal>> finisher() {
+            return acc -> {
+                if (acc.count == 0) {
+                    return Optional.empty();
+                }
+
+                return Optional.of(divide(acc.amount, new BigDecimal(acc.count)));
+            };
         }
 
         @Override
