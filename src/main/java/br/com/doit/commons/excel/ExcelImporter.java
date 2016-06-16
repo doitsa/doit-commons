@@ -81,7 +81,7 @@ public class ExcelImporter {
 
     /**
      * Cria uma nova instância do importador de dados do Excel usando a configuração passada por parâmetro.
-     * 
+     *
      * @param config
      *            A configuração das colunas e tipos suportados por esse importador
      */
@@ -92,6 +92,10 @@ public class ExcelImporter {
     private Object extractCellValue(Cell cell, String columnName) {
         if (cell.getCellType() == Cell.CELL_TYPE_STRING && "-".equals(cell.getStringCellValue())) {
             return CLEAR_DATA_MARKER;
+        }
+
+        if (Cells.isEmpty(cell)) {
+            return null;
         }
 
         try {
@@ -106,7 +110,7 @@ public class ExcelImporter {
     /**
      * Extrai as linhas de uma planilha do Excel como uma lista de <code>Map</code>s de acordo com as configurações
      * passadas por parâmetro.
-     * 
+     *
      * @param spreadsheetUrl
      *            A URL da planilha.
      * @return Retorna uma lista de <code>Map</code>s contendo os dados das linhas da planilha.
