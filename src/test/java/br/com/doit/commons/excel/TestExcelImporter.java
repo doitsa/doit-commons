@@ -82,6 +82,21 @@ public class TestExcelImporter {
     }
 
     @Test
+    public void emptyDateAndCurrencyCell() throws Exception {
+        URL url = getClass().getResource("/importer/empty_date_and_currency_cell.xlsx");
+
+        Map<String, Object> result = importer.extractRows(url).get(0);
+
+        assertThat(result.containsKey("DATE"), is(true));
+        assertThat(result.containsKey("AMOUNT"), is(true));
+        assertThat(result.containsKey("CURRENCY"), is(true));
+
+        assertThat(result.get("DATE"), nullValue());
+        assertThat(result.get("AMOUNT"), nullValue());
+        assertThat(result.get("CURRENCY"), nullValue());
+    }
+
+    @Test
     public void extractOneLineFromInputStreamWhenProcessingSpreadsheet() throws Exception {
         InputStream input = getClass().getResourceAsStream("/importer/one_line.xlsx");
 

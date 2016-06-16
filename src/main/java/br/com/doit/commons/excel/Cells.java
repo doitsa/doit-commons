@@ -18,7 +18,7 @@ import br.com.doit.commons.l10n.Messages;
 
 /**
  * Classe utilitária com métodos auxiliares para manipular células de uma planilha do Excel.
- * 
+ *
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  * @see Cell
  */
@@ -44,18 +44,18 @@ class Cells {
 
     /**
      * Verifica se o valor de uma célula do Excel é nulo ou vazio.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna <code>true</code> se a célula não possuir conteúdo ou <code>false</code> caso contrário.
      */
-    public static boolean isNull(Cell cell) {
-        return cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK;
+    public static boolean isEmpty(Cell cell) {
+        return cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK || (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isBlank(cell.getStringCellValue()));
     }
 
     /**
      * Converte o valor de uma célula do Excel para <code>BigDecimal</code>.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula como <code>BigDecimal</code>, <code>null</code> caso o valor da célula seja
@@ -63,7 +63,7 @@ class Cells {
      *         <code>BigDecimal</code>.
      */
     public static BigDecimal toBigDecimal(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
@@ -81,7 +81,7 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel para <code>Boolean</code>.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula como <code>Boolean</code>, <code>null</code> caso o valor da célula seja
@@ -89,7 +89,7 @@ class Cells {
      *         <code>Boolean</code>.
      */
     public static Boolean toBoolean(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
@@ -111,14 +111,14 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel para <code>NSTimestamp</code>.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula como <code>NSTimestamp</code> ou <code>null</code> caso o valor da célula seja
      *         vazio.
      */
     public static NSTimestamp toDate(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
@@ -127,7 +127,7 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel para <code>Integer</code>.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula como <code>Integer</code>, <code>null</code> caso o valor da célula seja
@@ -135,7 +135,7 @@ class Cells {
      *         <code>Integer</code>.
      */
     public static Integer toInteger(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
@@ -153,7 +153,7 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel e retorna um objeto de acordo com o seu tipo.
-     * 
+     *
      * <pre>
      * <b>Tipo da Célula</b> <b>Tipo do Objeto Retornado</b>
      * Campo Texto <code>java.lang.String</code>
@@ -166,7 +166,7 @@ class Cells {
      */
     @SuppressWarnings("unchecked")
     public static <T> T toObject(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
@@ -182,7 +182,7 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel para o tipo fornecido por parâmetro.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @param type
@@ -213,14 +213,14 @@ class Cells {
 
     /**
      * Converte o valor de uma célula do Excel para <code>String</code>.
-     * 
+     *
      * @param cell
      *            Uma célula de uma planilha do Excel.
      * @return Retorna o valor da célula como <code>String</code> ou <code>null</code> caso o valor da célula seja
      *         vazio ou não reconhecido.
      */
     public static String toString(Cell cell) {
-        if (isNull(cell)) {
+        if (isEmpty(cell)) {
             return null;
         }
 
