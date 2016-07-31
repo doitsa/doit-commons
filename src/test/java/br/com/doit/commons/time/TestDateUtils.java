@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,8 +34,24 @@ public class TestDateUtils {
     }
 
     @Test
-    public void returnNullWhenConvertingFromNullLocalDate() throws Exception {
+    public void returnNullWhenConvertingFromNullLocalDateToDate() throws Exception {
         Date result = DateUtils.toDate(null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createLocalDateWithDefaultTimeZoneWhenConvertingFromDate() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse("1983-01-07");
+
+        LocalDate result = DateUtils.toLocalDate(date);
+
+        assertThat(result, is(LocalDate.of(1983, 1, 7)));
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullDateToLocalDate() throws Exception {
+        LocalDate result = DateUtils.toLocalDate(null);
 
         assertThat(result, nullValue());
     }
