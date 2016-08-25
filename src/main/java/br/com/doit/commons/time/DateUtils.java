@@ -27,6 +27,14 @@ public class DateUtils {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Converte um {@code java.util.Date} para {@code java.time.LocalDate} usando o timezone definido pelo sistema.
+     *
+     * @param date
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code java.time.LocalDate} para a data informada ou {@code null} caso nenhuma data tenha sido
+     *         informada.
+     */
     public static LocalDate toLocalDate(Date date) {
         if (date == null) {
             return null;
