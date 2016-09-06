@@ -1,6 +1,8 @@
 package br.com.doit.commons.stream;
 
 import static br.com.doit.commons.stream.BigDecimalCollectors.averaging;
+import static br.com.doit.commons.stream.BigDecimalCollectors.summing;
+import static java.util.function.Function.identity;
 import static java.util.stream.Stream.concat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -61,5 +63,47 @@ public class TestBigDecimalCollectors {
 
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), is(new BigDecimal("2.3")));
+    }
+
+    @Test
+    public void summingWhenStreamReturnsNoElements() throws Exception {
+        BigDecimal result = Stream.<BigDecimal> empty().collect(summing(identity()));
+
+        assertThat(result, is(BigDecimal.ZERO));
+    }
+
+    @Test
+    public void summingWhenStreamReturnsOneElement() throws Exception {
+        BigDecimal result = Stream.of(BigDecimal.ONE).collect(summing(identity()));
+
+        assertThat(result, is(BigDecimal.ONE));
+    }
+
+    @Test
+    public void summingWhenStreamReturnsTwoElements() throws Exception {
+        BigDecimal result = Stream.of(BigDecimal.ONE, BigDecimal.TEN).collect(summing(identity()));
+
+        assertThat(result, is(new BigDecimal("11")));
+    }
+
+    @Test
+    public void summingCombineResultWhenStreamCombinedWithAnotherInParallel() throws Exception {
+        BigDecimal result = concat(Stream.of(BigDecimal.ONE).parallel(), Stream.of(BigDecimal.TEN).parallel()).collect(summing(identity()));
+
+        assertThat(result, is(new BigDecimal("11")));
+    }
+
+    @Test
+    public void summingApplyFunctionWhenStreamContainsObjects() throws Exception {
+        BigDecimal result = Stream.of(Optional.of(BigDecimal.ONE)).collect(summing(Optional::get));
+
+        assertThat(result, is(BigDecimal.ONE));
+    }
+
+    @Test
+    public void roundValueWhenSummingWithScaleAndRoundMode() throws Exception {
+        BigDecimal result = Stream.of(new BigDecimal("0.41"), new BigDecimal("0.31")).collect(summing(identity()).withScale(1, RoundingMode.HALF_EVEN));
+
+        assertThat(result, is(new BigDecimal("0.7")));
     }
 }
