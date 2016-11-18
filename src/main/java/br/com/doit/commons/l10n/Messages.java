@@ -47,7 +47,7 @@ public class Messages {
      */
     public static Messages getMessages(String resourceBundleName) {
         // Verifica se o ResourceBundle existe
-        ResourceBundle.getBundle(resourceBundleName);
+        Messages.getBundle(resourceBundleName);
 
         return new Messages(resourceBundleName);
     }
@@ -112,12 +112,19 @@ public class Messages {
     }
 
     private ResourceBundle messages() {
-        Locale locale = localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
-
         if (!isCacheEnabled) {
             ResourceBundle.clearCache();
         }
 
-        return ResourceBundle.getBundle(resourceBundleName, locale);
+        return Messages.getBundle(resourceBundleName);
     }
+
+    private static ResourceBundle getBundle(String resourceBundleName) {
+        return ResourceBundle.getBundle(resourceBundleName, locale());
+    }
+
+    private static Locale locale() {
+        return localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
+    }
+
 }

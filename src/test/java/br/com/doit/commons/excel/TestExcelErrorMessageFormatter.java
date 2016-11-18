@@ -8,12 +8,14 @@ import static org.mockito.Mockito.when;
 import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
 
+import br.com.doit.commons.basic.AbstractMessageTestCase;
 import br.com.doit.commons.excel.ExcelImporter.ExcelErrorMessageFormatter;
 
 /**
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
-public class TestExcelErrorMessageFormatter {
+public class TestExcelErrorMessageFormatter extends AbstractMessageTestCase {
+
     @Test
     public void formatColumnOneToLetterAWhenFormattingMessage() throws Exception {
         Cell cell = mock(Cell.class);
