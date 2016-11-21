@@ -74,6 +74,14 @@ public class Messages {
         Messages.localeSupplier = localeSupplier;
     }
 
+    private static ResourceBundle getBundle(String resourceBundleName) {
+        return ResourceBundle.getBundle(resourceBundleName, locale());
+    }
+
+    private static Locale locale() {
+        return localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
+    }
+
     private final String resourceBundleName;
 
     private Messages(String resourceBundleName) {
@@ -118,13 +126,4 @@ public class Messages {
 
         return Messages.getBundle(resourceBundleName);
     }
-
-    private static ResourceBundle getBundle(String resourceBundleName) {
-        return ResourceBundle.getBundle(resourceBundleName, locale());
-    }
-
-    private static Locale locale() {
-        return localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
-    }
-
 }
