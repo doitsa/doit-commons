@@ -17,10 +17,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import br.com.doit.commons.basic.AbstractMessageTestCase;
+
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class TestMessages {
+public class TestMessages extends AbstractMessageTestCase {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -62,7 +64,7 @@ public class TestMessages {
     @Test
     public void throwExceptionWhenResourceBundleNotFound() throws Exception {
         thrown.expect(MissingResourceException.class);
-        thrown.expectMessage(is("Can't find bundle for base name br/com/doit/commons/test/notfound, locale en_US"));
+        thrown.expectMessage(is("Can't find bundle for base name br/com/doit/commons/test/notfound, locale en"));
 
         Messages.getMessages("br/com/doit/commons/test/notfound");
     }
