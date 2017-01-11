@@ -47,7 +47,7 @@ public class Messages {
      */
     public static Messages getMessages(String resourceBundleName) {
         // Verifica se o ResourceBundle existe
-        Messages.getBundle(resourceBundleName);
+        ResourceBundle.getBundle(resourceBundleName);
 
         return new Messages(resourceBundleName);
     }
@@ -72,14 +72,6 @@ public class Messages {
      */
     public static void setSupplierOfLocale(Supplier<Locale> localeSupplier) {
         Messages.localeSupplier = localeSupplier;
-    }
-
-    private static ResourceBundle getBundle(String resourceBundleName) {
-        return ResourceBundle.getBundle(resourceBundleName, locale());
-    }
-
-    private static Locale locale() {
-        return localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
     }
 
     private final String resourceBundleName;
@@ -120,10 +112,12 @@ public class Messages {
     }
 
     private ResourceBundle messages() {
+        Locale locale = localeSupplier != null ? localeSupplier.get() : Locale.getDefault();
+
         if (!isCacheEnabled) {
             ResourceBundle.clearCache();
         }
 
-        return Messages.getBundle(resourceBundleName);
+        return ResourceBundle.getBundle(resourceBundleName, locale);
     }
 }

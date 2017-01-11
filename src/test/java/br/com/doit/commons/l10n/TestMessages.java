@@ -30,6 +30,8 @@ public class TestMessages extends AbstractMessageTestCase {
 
     @Before
     public void setup() {
+        Locale.setDefault(Locale.US);
+
         messages = Messages.getMessages("br/com/doit/commons/test/messages");
     }
 
@@ -64,7 +66,7 @@ public class TestMessages extends AbstractMessageTestCase {
     @Test
     public void throwExceptionWhenResourceBundleNotFound() throws Exception {
         thrown.expect(MissingResourceException.class);
-        thrown.expectMessage(is("Can't find bundle for base name br/com/doit/commons/test/notfound, locale en"));
+        thrown.expectMessage(is("Can't find bundle for base name br/com/doit/commons/test/notfound, locale en_US"));
 
         Messages.getMessages("br/com/doit/commons/test/notfound");
     }
