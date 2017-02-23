@@ -1,6 +1,7 @@
 package br.com.doit.commons.time;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -41,5 +42,38 @@ public class DateUtils {
         }
 
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Converte um {@code java.time.LocalDateTime} para {@code java.util.Date} usando o timezone definido pelo sistema.
+     *
+     * @param localDateTime
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code java.util.Date} para a data informada ou {@code null} caso nenhuma data tenha sido
+     *         informada.
+     */
+    public static Date toDateTime(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Converte um {@code java.util.Date} para {@code java.time.LocalDateTime} usando o timezone definido pelo sistema.
+     *
+     * @param date
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code java.time.LocalDateTime} para a data informada ou {@code null} caso nenhuma data tenha
+     *         sido
+     *         informada.
+     */
+    public static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }
