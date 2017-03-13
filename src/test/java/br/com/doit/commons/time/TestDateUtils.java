@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -94,6 +95,48 @@ public class TestDateUtils {
     @Test
     public void returnNullWhenConvertingFromNullDateToLocalDateTime() throws Exception {
         LocalDate result = DateUtils.toLocalDate(null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createDateWithDefaultTimeZoneWhenConvertingFromLocalTime() throws Exception {
+        LocalDate localDate = LocalDate.of(1991, 2, 16);
+        LocalTime localTime = LocalTime.of(9, 0, 31);
+
+        Date result = DateUtils.toDateTime(localTime, localDate);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(1991));
+        assertThat(calendar.get(Calendar.MONTH), is(1));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(16));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(9));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(31));
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullLocalDateToLocalTime() throws Exception {
+        Date result = DateUtils.toDate(null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createLocalDateWithDefaultTimeZoneWhenConvertingFromLocalTime() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 09:00:10");
+
+        LocalTime result = DateUtils.toLocalTime(date);
+
+        assertThat(result, is(LocalTime.of(9, 0, 10)));
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullDateToLocalTime() throws Exception {
+        LocalTime result = DateUtils.toLocalTime(null);
 
         assertThat(result, nullValue());
     }
