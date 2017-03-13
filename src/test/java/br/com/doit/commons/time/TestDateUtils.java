@@ -101,10 +101,10 @@ public class TestDateUtils {
 
     @Test
     public void createDateWithDefaultTimeZoneWhenConvertingFromLocalTime() throws Exception {
-        LocalDate localDate = LocalDate.of(1991, 2, 16);
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 00:00:00");
         LocalTime localTime = LocalTime.of(9, 0, 31);
 
-        Date result = DateUtils.toDateTime(localTime, localDate);
+        Date result = DateUtils.toDateTime(date, localTime);
 
         Calendar calendar = Calendar.getInstance();
 
@@ -120,7 +120,7 @@ public class TestDateUtils {
 
     @Test
     public void returnNullWhenConvertingFromNullLocalDateToLocalTime() throws Exception {
-        Date result = DateUtils.toDate(null);
+        Date result = DateUtils.toDateTime(null, null);
 
         assertThat(result, nullValue());
     }
@@ -139,5 +139,23 @@ public class TestDateUtils {
         LocalTime result = DateUtils.toLocalTime(null);
 
         assertThat(result, nullValue());
+    }
+
+    @Test
+    public void returnMidnightWhenConvertingFromNullLocalTimeAndPassingAValidDate() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 00:00:00");
+
+        Date result = DateUtils.toDateTime(date, null);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(1991));
+        assertThat(calendar.get(Calendar.MONTH), is(1));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(16));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(0));
     }
 }

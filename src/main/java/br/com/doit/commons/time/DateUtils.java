@@ -88,12 +88,16 @@ public class DateUtils {
      * @return Retorna um {@code java.util.Date} para a data informada ou {@code null} caso nenhuma data tenha sido
      *         informada.
      */
-    public static Date toDateTime(LocalTime localTime, LocalDate localDate) {
-        if (localTime == null || localDate == null) {
+    public static Date toDateTime(Date date, LocalTime localTime) {
+        if (date == null) {
             return null;
         }
 
-        return Date.from(localTime.atDate(localDate).atZone(ZoneId.systemDefault()).toInstant());
+        if (localTime == null) {
+            localTime = LocalTime.MIDNIGHT;
+        }
+
+        return Date.from(localTime.atDate(toLocalDate(date)).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
