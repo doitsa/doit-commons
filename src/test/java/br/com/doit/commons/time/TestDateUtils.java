@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -96,5 +97,65 @@ public class TestDateUtils {
         LocalDate result = DateUtils.toLocalDate(null);
 
         assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createDateWithDefaultTimeZoneWhenConvertingFromLocalTime() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 00:00:00");
+        LocalTime localTime = LocalTime.of(9, 0, 31);
+
+        Date result = DateUtils.toDateTime(date, localTime);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(1991));
+        assertThat(calendar.get(Calendar.MONTH), is(1));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(16));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(9));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(31));
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullLocalDateToLocalTime() throws Exception {
+        Date result = DateUtils.toDateTime(null, null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createLocalDateWithDefaultTimeZoneWhenConvertingFromLocalTime() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 09:00:10");
+
+        LocalTime result = DateUtils.toLocalTime(date);
+
+        assertThat(result, is(LocalTime.of(9, 0, 10)));
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullDateToLocalTime() throws Exception {
+        LocalTime result = DateUtils.toLocalTime(null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void returnMidnightWhenConvertingFromNullLocalTimeAndPassingAValidDate() throws Exception {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1991-02-16 00:00:00");
+
+        Date result = DateUtils.toDateTime(date, null);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(1991));
+        assertThat(calendar.get(Calendar.MONTH), is(1));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(16));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(0));
     }
 }
