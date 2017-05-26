@@ -16,7 +16,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class TestERXKeyValeuCast {
+public class TestERXKeyValueCast {
     @Test
     public void returnCastedValueWhenValueIsNotNull() throws Exception {
         String result = cast("value").as(String.class);
