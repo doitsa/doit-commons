@@ -4,6 +4,7 @@ import static br.com.doit.commons.math.MathUtils.RemainderDistributionMode.IGNOR
 import static br.com.doit.commons.math.MathUtils.RemainderDistributionMode.STRICTLY_PROPORTIONAL;
 import static br.com.doit.commons.math.MathUtils.RemainderDistributionMode.UNEVENLY;
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_EVEN;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -161,6 +162,23 @@ public class MathUtils {
          * de cada <code>Fraction</code>.
          */
         UNEVENLY
+    }
+
+    /**
+     * Calcula a porcentagem correspondente à parte de um todo.
+     *
+     * @param whole
+     *            O todo.
+     * @param part
+     *            A parte do todo.
+     * @return Retorna a parte do todo como porcentagem. Se o todo for igual a zero, retorna zero.
+     */
+    public static BigDecimal calculatePercentage(BigDecimal whole, BigDecimal part) {
+        if (whole.compareTo(ZERO) == 0) {
+            return ZERO;
+        }
+
+        return part.multiply(new BigDecimal("100")).divide(whole, 2, HALF_EVEN);
     }
 
     /**
