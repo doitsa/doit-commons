@@ -6,15 +6,21 @@ checkout:
   post:
     - rm -rf target
     - mkdir target
-    - wget -O target/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
+    - wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
 
 dependencies:
   override:
-    - mvn dependency:go-offline dependency:resolve-plugins -B -s target/settings.xml -DskipTests
+    - mvn dependency:go-offline dependency:resolve-plugins -B -s /tmp/settings.xml -DskipTests
 
 test:
   override:
-    - mvn test -B -s target/settings.xml
+    - if [[ $GIT_USER_EMAIL ]]; then git config --global user.email "$GIT_USER_EMAIL" ; fi
+    - if [[ $GIT_USER_NAME ]]; then git config --global user.name "$GIT_USER_NAME" ; fi
+    - if [[ $RELEASE ]]; then
+        mvn release:prepare -B -s /tmp/settings.xml -DreleaseVersion=$RELEASE -DdevelopmentVersion=$NEXT ;
+      else
+        mvn test -B -s /tmp/settings.xml ;
+      fi
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
@@ -23,4 +29,8 @@ deployment:
   main:
     branch: /.*/
     commands:
-      - mvn deploy -B -s target/settings.xml -DskipTests
+      - if [[ $RELEASE ]]; then
+          mvn release:perform -B -s /tmp/settings.xml -DreleaseVersion=$RELEASE -DdevelopmentVersion=$NEXT ;
+        else
+          mvn deploy -B -s /tmp/settings.xml -DskipTests ;
+        fi
