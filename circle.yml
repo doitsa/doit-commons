@@ -4,8 +4,6 @@ machine:
 
 checkout:
   post:
-    - rm -rf target
-    - mkdir target
     - wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
 
 dependencies:
