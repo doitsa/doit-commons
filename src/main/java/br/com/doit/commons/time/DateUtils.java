@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.webobjects.foundation.NSTimestamp;
+
 /**
  * Classe utilitária para ajudar na conversão de objetos da nova API de data de Java 8 (pacote {@code java.time}) para o
  * antigo {@code java.util.Date}.
@@ -115,5 +117,13 @@ public class DateUtils {
         }
 
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+    }
+
+    public static NSTimestamp toNSTimestamp(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+
+        return new NSTimestamp(toDateTime(dateTime));
     }
 }

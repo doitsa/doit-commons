@@ -13,6 +13,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import com.webobjects.foundation.NSTimestamp;
+
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
@@ -157,5 +159,28 @@ public class TestDateUtils {
         assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
         assertThat(calendar.get(Calendar.MINUTE), is(0));
         assertThat(calendar.get(Calendar.SECOND), is(0));
+    }
+
+    @Test
+    public void returnNSTimestampWhenConvertingFromLocalDateTime() throws Exception {
+        NSTimestamp result = DateUtils.toNSTimestamp(LocalDateTime.of(2016, 5, 3, 2, 45));
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(2016));
+        assertThat(calendar.get(Calendar.MONTH), is(4));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(3));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(2));
+        assertThat(calendar.get(Calendar.MINUTE), is(45));
+        assertThat(calendar.get(Calendar.SECOND), is(0));
+    }
+
+    @Test
+    public void returnNullNSTimestampWhenConvertingFromNullLocalDateTime() throws Exception {
+        NSTimestamp result = DateUtils.toNSTimestamp(null);
+
+        assertThat(result, nullValue());
     }
 }
