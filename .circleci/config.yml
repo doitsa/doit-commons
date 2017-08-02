@@ -1,0 +1,97 @@
+defaults: &defaults
+  working_directory: ~/doit-commons
+  docker:
+    - image: circleci/java:8-jdk
+      environment:
+        TZ: "/usr/share/zoneinfo/America/Sao_Paulo"
+
+version: 2
+jobs:
+  cache_dependencies:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run: wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
+
+      - restore_cache:
+          key: doit-commons-{{ checksum "pom.xml" }}
+
+      - run: mvn package dependency:go-offline dependency:resolve-plugins -B -s /tmp/settings.xml -Dmaven.test.skip
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: doit-commons-{{ checksum "pom.xml" }}
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run: wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
+
+      - restore_cache:
+          key: doit-commons-{{ checksum "pom.xml" }}
+
+      - run: |
+          mvn install -B -s /tmp/settings.xml ;
+
+      - run: |
+          mkdir -p /tmp/junit
+          find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} /tmp/junit/ \;
+
+      - store_test_results:
+          path: /tmp/junit
+
+      - store_artifacts:
+          path: /tmp/junit
+
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run: wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
+
+      - restore_cache:
+          key: doit-commons-{{ checksum "pom.xml" }}
+
+      - run: |
+          if [[ $GIT_USER_EMAIL ]]; then git config --global user.email "$GIT_USER_EMAIL" ; fi
+          if [[ $GIT_USER_NAME ]]; then git config --global user.name "$GIT_USER_NAME" ; fi
+          if [[ $RELEASE ]]; then
+            mvn release:prepare release:perform -B -s /tmp/settings.xml -DreleaseVersion=$RELEASE -DdevelopmentVersion=$NEXT ;
+          else
+            mvn deploy -B -s /tmp/settings.xml ;
+          fi
+
+      - run: |
+          mkdir -p /tmp/junit
+          find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} /tmp/junit/ \;
+
+      - store_test_results:
+          path: /tmp/junit
+
+      - store_artifacts:
+          path: /tmp/junit
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - cache_dependencies
+      - test:
+          requires:
+            - cache_dependencies
+          filters:
+            branches:
+              ignore:
+                - master
+      - build:
+          requires:
+            - cache_dependencies
+          filters:
+            branches:
+              only:
+                - master
