@@ -179,7 +179,30 @@ public class TestDateUtils {
 
     @Test
     public void returnNullNSTimestampWhenConvertingFromNullLocalDateTime() throws Exception {
-        NSTimestamp result = DateUtils.toNSTimestamp(null);
+        NSTimestamp result = DateUtils.toNSTimestamp((LocalDateTime) null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void returnNSTimestampWhenConvertingFromLocalDate() throws Exception {
+        NSTimestamp result = DateUtils.toNSTimestamp(LocalDate.of(2016, 5, 3));
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(2016));
+        assertThat(calendar.get(Calendar.MONTH), is(4));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(3));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(0));
+    }
+
+    @Test
+    public void returnNullNSTimestampWhenConvertingFromNullLocalDate() throws Exception {
+        NSTimestamp result = DateUtils.toNSTimestamp((LocalDate) null);
 
         assertThat(result, nullValue());
     }
