@@ -108,8 +108,7 @@ public class DateUtils {
      * @param date
      *            Uma data (pode ser nula).
      * @return Retorna um {@code java.time.LocalTime} para a data informada ou {@code null} caso nenhuma data tenha
-     *         sido
-     *         informada.
+     *         sido informada.
      */
     public static LocalTime toLocalTime(Date date) {
         if (date == null) {
@@ -119,11 +118,37 @@ public class DateUtils {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
     }
 
+    /**
+     * Converte um {@code java.time.LocalDateTime} para {@code com.webobjects.foundation.NSTimestamp} usando o timezone
+     * definido pelo sistema.
+     *
+     * @param dateTime
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code com.webobjects.foundation.NSTimestamp} para a data informada ou {@code null} caso nenhuma
+     *         data tenha sido informada.
+     */
     public static NSTimestamp toNSTimestamp(LocalDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
 
         return new NSTimestamp(toDateTime(dateTime));
+    }
+
+    /**
+     * Converte um {@code java.time.LocalDate} para {@code com.webobjects.foundation.NSTimestamp} usando o timezone
+     * definido pelo sistema.
+     *
+     * @param localDate
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code com.webobjects.foundation.NSTimestamp} para a data informada ou {@code null} caso nenhuma
+     *         data tenha sido informada.
+     */
+    public static NSTimestamp toNSTimestamp(LocalDate localDate) {
+        if (localDate == null) {
+            return null;
+        }
+
+        return new NSTimestamp(toDate(localDate));
     }
 }
