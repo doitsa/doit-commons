@@ -24,12 +24,16 @@ public class TextNormalizerUtils {
             return null;
         }
 
-        return toAscii(text).replaceAll("[^a-zA-Z0-9\\s\\.:-]", "").replaceAll("\n", "").trim();
+        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s\\.:-]"), "[\\n\\t]").trim();
+    }
+
+    private static String stripChars(String text, String pattern) {
+        return text.replaceAll(pattern, "");
     }
 
     /**
      * Remove todos os caracteres não alfanuméricos do texto.
-     * 
+     *
      * @param text
      *            O texto que deverá ser tratado
      * @return Retorna o texto contendo apenas caracteres alfanuméricos
@@ -39,7 +43,7 @@ public class TextNormalizerUtils {
             return null;
         }
 
-        return toAscii(text).replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\n", "").trim();
+        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s]"), "[\\n\\t]").trim();
     }
 
     /**
