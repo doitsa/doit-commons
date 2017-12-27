@@ -58,9 +58,9 @@
 	</dependencies>
 
 	<scm>
-        <connection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</connection>
-        <url>scm:git:ssh://git@github.com/doitsa/doit-commons.git</url>
-        <developerConnection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</developerConnection>
-      <tag>HEAD</tag>
+		<connection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</connection>
+		<url>scm:git:ssh://git@github.com/doitsa/doit-commons.git</url>
+		<developerConnection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</developerConnection>
+	  <tag>HEAD</tag>
   </scm>
 </project>

@@ -18,6 +18,13 @@ public class TestTextNormalizerUtils {
     }
 
     @Test
+    public void lightStripTabsFromTheMiddleOfWords() throws Exception {
+        String result = TextNormalizerUtils.lightStripNonAlphanumericChars("abc \t def");
+
+        assertThat(result, is("abc  def"));
+    }
+
+    @Test
     public void normalizeNullString() throws Exception {
         String result = TextNormalizerUtils.toAscii(null);
 
@@ -75,6 +82,13 @@ public class TestTextNormalizerUtils {
         String result = TextNormalizerUtils.stripNonNumericChars("123.456.789-09ABC");
 
         assertThat(result, is("12345678909"));
+    }
+
+    @Test
+    public void stripTabsFromTheMiddleOfWords() throws Exception {
+        String result = TextNormalizerUtils.stripNonAlphanumericChars("abc \t def");
+
+        assertThat(result, is("abc  def"));
     }
 
     @Test
