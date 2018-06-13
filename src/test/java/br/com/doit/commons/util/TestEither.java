@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -84,5 +85,19 @@ public class TestEither {
         thrown.expectMessage(is("Either must have a left or a right. Left: null. Right: null."));
 
         Either.right(null);
+    }
+
+    @Test
+    public void returnLeftValueWhenGeneratingToStringForALeft() throws Exception {
+        String toString = Either.left("test").toString();
+
+        assertThat(toString, is("Left[test]"));
+    }
+
+    @Test
+    public void returnRightValueWhenGeneratingToStringForARight() throws Exception {
+        String toString = Either.right(BigDecimal.ONE).toString();
+
+        assertThat(toString, is("Right[1]"));
     }
 }
