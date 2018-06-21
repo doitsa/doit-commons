@@ -34,8 +34,7 @@ jobs:
       - restore_cache:
           key: doit-commons-{{ checksum "pom.xml" }}
 
-      - run: |
-          mvn install -B -s /tmp/settings.xml ;
+      - run: mvn install -B -s /tmp/settings.xml
 
       - run: |
           mkdir -p /tmp/junit
@@ -46,6 +45,18 @@ jobs:
 
       - store_artifacts:
           path: /tmp/junit
+
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run: wget -O /tmp/settings.xml "https://s3.amazonaws.com/www.doit.com.br/continuous-integration/NsaxdhByNmpHPjuy6uuZCytE4pT5czRqWPUq5TWgyCnwZygsySYPRbWk4r7msCjx.xml"
+
+      - restore_cache:
+          key: doit-commons-{{ checksum "pom.xml" }}
+
+      - run: mvn deploy -B -s /tmp/settings.xml -Dmaven.test.skip
 
   build:
     <<: *defaults
@@ -65,7 +76,6 @@ jobs:
           else
             mvn deploy -B -s /tmp/settings.xml ;
           fi
-
       - run: |
           mkdir -p /tmp/junit
           find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} /tmp/junit/ \;
@@ -88,6 +98,15 @@ workflows:
             branches:
               ignore:
                 - master
+                - staging
+                - /release.*/
+      - hold:
+          type: approval
+          requires:
+            - test
+      - deploy:
+          requires:
+            - hold
       - build:
           requires:
             - cache_dependencies
@@ -95,3 +114,5 @@ workflows:
             branches:
               only:
                 - master
+                - staging
+                - /release.*/
