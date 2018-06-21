@@ -65,10 +65,19 @@ public class Either<L, R> {
      * {@code isRight}.
      */
     public void fold(Consumer<L> leftFunction, Consumer<R> rightFunction) {
-        if (right == null) {
+        if (isLeft()) {
             leftFunction.accept(left);
         } else {
             rightFunction.accept(right);
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (isLeft()) {
+            return String.format("Left[%s]", left);
+        } else {
+            return String.format("Right[%s]", right);
         }
     }
 }
