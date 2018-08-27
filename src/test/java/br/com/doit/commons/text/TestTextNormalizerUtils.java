@@ -34,7 +34,7 @@ public class TestTextNormalizerUtils {
     @Test
     public void normalizeStringWithSpecialChars() throws Exception {
         String result = TextNormalizerUtils
-                .toAscii("\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00e7\u00c7\u00e3\u00f5");
+                                           .toAscii("\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00e7\u00c7\u00e3\u00f5");
 
         assertThat(result, is("aeiouAEIOUcCao"));
     }
@@ -42,14 +42,13 @@ public class TestTextNormalizerUtils {
     @Test
     public void removeAllLineBreaks() {
         String result = TextNormalizerUtils
-                .stripNonAlphanumericChars("Rua \nGuaip\u00e1,\n 1443 , /");
+                                           .stripNonAlphanumericChars("Rua \nGuaip\u00e1,\n 1443 , /");
 
         assertThat(result, is("Rua Guaipa 1443"));
     }
 
     @Test
-    public void stripNonAlphanumericCharsAndConvertSpecialChars()
-            throws Exception {
+    public void stripNonAlphanumericCharsAndConvertSpecialChars() throws Exception {
         String result = TextNormalizerUtils.stripNonAlphanumericChars("123',\u00e1\u00e9\u00ed\u00f3\u00fa.~456");
 
         assertThat(result, is("123aeiou456"));
@@ -65,7 +64,7 @@ public class TestTextNormalizerUtils {
     @Test
     public void stripNonAlphanumericCharsFromString() throws Exception {
         String result = TextNormalizerUtils
-                .stripNonAlphanumericChars("prefix123',.~456sufix");
+                                           .stripNonAlphanumericChars("prefix123',.~456sufix");
 
         assertThat(result, is("prefix123456sufix"));
     }
@@ -94,7 +93,7 @@ public class TestTextNormalizerUtils {
     @Test
     public void trimAfterRemovingSpecials() {
         String result = TextNormalizerUtils
-                .stripNonAlphanumericChars("Rua Guaip\u00e1, 1443 , /");
+                                           .stripNonAlphanumericChars("Rua Guaip\u00e1, 1443 , /");
 
         assertThat(result, is("Rua Guaipa 1443"));
     }
@@ -119,4 +118,5 @@ public class TestTextNormalizerUtils {
 
         assertThat(result, is("abc"));
     }
+
 }
