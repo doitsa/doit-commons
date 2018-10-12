@@ -1,7 +1,9 @@
 package br.com.doit.commons.lang;
 
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 
@@ -49,5 +51,25 @@ public class TestEnums {
         SampleEnum[] result = Enums.valuesExcluding(SampleEnum.class);
 
         assertArrayEquals(result, SampleEnum.values());
+    }
+
+    @Test
+    public void returnValueForExistingEnumValue() throws Exception {
+        assertThat(Enums.valueOfOrNull(SampleEnum.class, "ONE"), is(SampleEnum.ONE));
+    }
+
+    @Test
+    public void returnNullForUnknownEnumValue() throws Exception {
+        assertThat(Enums.valueOfOrNull(SampleEnum.class, "TWELVE"), nullValue());
+    }
+
+    @Test
+    public void returnNulForNullEnumValue() throws Exception {
+        assertThat(Enums.valueOfOrNull(SampleEnum.class, null), nullValue());
+    }
+
+    @Test
+    public void returnNulForNullEnum() throws Exception {
+        assertThat(Enums.valueOfOrNull(null, null), nullValue());
     }
 }
