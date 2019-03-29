@@ -175,6 +175,16 @@ public class TestCells {
         assertThat(result, is("xxx"));
     }
 
+    @Test
+    public void trimStringWhenConvertingToNumericAndCellContainsBlankSpaces() throws Exception {
+        when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+        when(cell.getStringCellValue()).thenReturn("   10    ");
+
+        Integer result = Cells.toInteger(cell);
+
+        assertThat(result, is(10));
+    }
+
     private <T> void verifyObjectConversion(Class<T> type, Object[][] parameters) {
         for (Object[] parameter : parameters) {
             when(cell.getCellType()).thenReturn((int) parameter[0]);

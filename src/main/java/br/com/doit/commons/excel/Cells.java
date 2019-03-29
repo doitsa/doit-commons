@@ -145,7 +145,7 @@ class Cells {
             case Cell.CELL_TYPE_NUMERIC:
                 return Double.valueOf(cell.getNumericCellValue()).intValue();
             case Cell.CELL_TYPE_STRING:
-                return Integer.parseInt(cell.getStringCellValue());
+                return Integer.parseInt(cell.getStringCellValue().trim());
             default:
                 throw new UnsupportedOperationException(messages.get(UNSUPPORTED_CELL_TYPE));
         }
