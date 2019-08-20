@@ -25,6 +25,14 @@ public class TestTextNormalizerUtils {
     }
 
     @Test
+    public void removeAllLineBreaksWhenLightStrippingChars() {
+        String result = TextNormalizerUtils
+                                           .lightStripNonAlphanumericChars("Rua \rGuaip\u00e1,\n 1443 , /");
+
+        assertThat(result, is("Rua Guaipa 1443"));
+    }
+
+    @Test
     public void normalizeNullString() throws Exception {
         String result = TextNormalizerUtils.toAscii(null);
 
@@ -42,7 +50,7 @@ public class TestTextNormalizerUtils {
     @Test
     public void removeAllLineBreaks() {
         String result = TextNormalizerUtils
-                                           .stripNonAlphanumericChars("Rua \nGuaip\u00e1,\n 1443 , /");
+                                           .stripNonAlphanumericChars("Rua \rGuaip\u00e1,\n 1443 , /");
 
         assertThat(result, is("Rua Guaipa 1443"));
     }

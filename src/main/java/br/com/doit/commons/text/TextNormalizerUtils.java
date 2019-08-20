@@ -24,7 +24,7 @@ public class TextNormalizerUtils {
             return null;
         }
 
-        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s\\.:-]"), "[\\n\\t]").trim();
+        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s\\.:-]"), "[\\n\\r\\t]").trim();
     }
 
     private static String stripChars(String text, String pattern) {
@@ -43,7 +43,7 @@ public class TextNormalizerUtils {
             return null;
         }
 
-        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s]"), "[\\n\\t]").trim();
+        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s]"), "[\\n\\r\\t]").trim();
     }
 
     /**
