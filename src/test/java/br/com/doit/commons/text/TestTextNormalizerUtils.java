@@ -127,4 +127,21 @@ public class TestTextNormalizerUtils {
         assertThat(result, is("abc"));
     }
 
+    @Test
+    public void removingEmojisFromText() throws Exception {
+        String result = TextNormalizerUtils.removeEmojis(null);
+
+        assertThat(result, is(nullValue()));
+    }
+
+    @Test
+    public void doNothingWhenRemovingEmojisFromNullText() throws Exception {
+        String emojiText = "小米写的 Привет 🛵 Neque porro *&*!123 quisquam est qui 👋🏽 dolorem ipsum quia 🧏 dolor sit amet, consectetur.";
+
+        String result = TextNormalizerUtils.removeEmojis(emojiText);
+
+        assertThat(result, is("小米写的 Привет Neque porro *&*!123 quisquam est qui dolorem ipsum quia dolor sit amet, consectetur."));
+
+    }
+
 }
