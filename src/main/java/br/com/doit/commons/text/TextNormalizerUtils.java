@@ -92,7 +92,7 @@ public class TextNormalizerUtils {
     }
 
     /**
-     * Remove emojis presetes no texto.
+     * Remove emojis presentes no texto.
      *
      * @param text
      *            O texto que deverá ser tratado
