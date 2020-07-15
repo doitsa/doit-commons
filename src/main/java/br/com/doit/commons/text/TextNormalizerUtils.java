@@ -92,6 +92,21 @@ public class TextNormalizerUtils {
     }
 
     /**
+     * Remove emojis presentes no texto.
+     *
+     * @param text
+     *            O texto que deverá ser tratado
+     * @return Retorna uma cópia do texto sem emojis
+     */
+    public static String removeEmojis(String text) {
+        if (text == null) {
+            return null;
+        }
+
+        return text.replaceAll("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]", "").replaceAll("  ", " ");
+    }
+
+    /**
      * Não deve ser instanciada.
      */
     private TextNormalizerUtils() {
