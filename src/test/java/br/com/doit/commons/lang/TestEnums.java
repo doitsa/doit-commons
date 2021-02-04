@@ -8,6 +8,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -71,5 +72,25 @@ public class TestEnums {
     @Test
     public void returnNulForNullEnum() throws Exception {
         assertThat(Enums.valueOfOrNull(null, null), nullValue());
+    }
+
+    @Test
+    public void returnOptinalEnumValueFromString() throws Exception {
+        assertThat(Enums.optionalValueOf(SampleEnum.class, "THREE"), is(Optional.of(SampleEnum.THREE)));
+    }
+
+    @Test
+    public void returnEmptyOptinalForUnknownEnumValueFromString() throws Exception {
+        assertThat(Enums.optionalValueOf(SampleEnum.class, "three"), is(Optional.empty()));
+    }
+
+    @Test
+    public void returnEmptyOptinalForNullEnumValue() throws Exception {
+        assertThat(Enums.optionalValueOf(SampleEnum.class, null), is(Optional.empty()));
+    }
+
+    @Test
+    public void returnEmptyOptinalForNullEnum() throws Exception {
+        assertThat(Enums.optionalValueOf(null, null), is(Optional.empty()));
     }
 }
