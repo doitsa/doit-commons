@@ -43,15 +43,7 @@ public class Enums {
      */
 
     public static <T extends Enum<T>> T valueOfOrNull(Class<T> type, String field) {
-
-        T t;
-        try {
-            t = Enum.valueOf(type, field);
-        } catch (Exception e) {
-            t = null;
-        }
-
-        return t;
+        return optionalValueOf(type, field).orElse(null);
     }
 
     /**
