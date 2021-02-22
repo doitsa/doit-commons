@@ -3,6 +3,7 @@ package br.com.doit.commons.lang;
 import static org.apache.commons.lang.ArrayUtils.removeElement;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Classe utilitária para manipular <code>Enum</code>s.
@@ -64,11 +65,13 @@ public class Enums {
      *         a chave, o valor <code>Optional.empty()</code> é retornado.
      */
     public static <T extends Enum<T>> Optional<T> optionalValueOf(Class<T> type, String field) {
-        try {
-            return Optional.of(Enum.valueOf(type, field));
-        } catch (Exception e) {
+        if (type == null) {
             return Optional.empty();
         }
+
+        return Stream.of(type.getEnumConstants())
+                     .filter(enumTypeValue -> enumTypeValue.toString().equals(field))
+                     .findFirst();
     }
 
     private Enums() {
