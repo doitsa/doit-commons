@@ -12,6 +12,10 @@
 	<name>DOit Commons Framework</name>
 	<description>Framework que contém funcionalidades comuns utilizadas em vários projetos da DOit.</description>
 
+	<properties>
+		<project.scm.id>github</project.scm.id>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -67,9 +71,9 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</connection>
-		<url>scm:git:ssh://git@github.com/doitsa/doit-commons.git</url>
-		<developerConnection>scm:git:ssh://git@github.com/doitsa/doit-commons.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:https://github.com/doitsa/doit-commons.git</connection>
+		<url>scm:git:https://github.com/doitsa/doit-commons.git</url>
+		<developerConnection>scm:git:https://github.com/doitsa/doit-commons.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 </project>
