@@ -2,6 +2,9 @@ package br.com.doit.commons.lang;
 
 import static org.apache.commons.lang.ArrayUtils.removeElement;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
  * Classe utilitária para manipular <code>Enum</code>s.
  *
@@ -40,11 +43,27 @@ public class Enums {
      */
 
     public static <T extends Enum<T>> T valueOfOrNull(Class<T> type, String field) {
-        try {
-            return Enum.valueOf(type, field);
-        } catch (Exception e) {
-            return null;
+        return optionalValueOf(type, field).orElse(null);
+    }
+
+    /**
+     *
+     * @param type
+     *            O tipo de Enum cujo valor será obtido.
+     * @param field
+     *            O campo à ser obtido de enum informado.
+     * @return Retorna um <code>Optional</code> do valor obtido do enum de acordo com a nome do campo, caso não seja
+     *         possível obter um valor para
+     *         a chave, o valor <code>Optional.empty()</code> é retornado.
+     */
+    public static <T extends Enum<T>> Optional<T> optionalValueOf(Class<T> type, String field) {
+        if (type == null) {
+            return Optional.empty();
         }
+
+        return Stream.of(type.getEnumConstants())
+                     .filter(enumTypeValue -> enumTypeValue.toString().equals(field))
+                     .findFirst();
     }
 
     private Enums() {
