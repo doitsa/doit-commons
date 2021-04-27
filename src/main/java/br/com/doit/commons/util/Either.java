@@ -3,6 +3,7 @@ package br.com.doit.commons.util;
 import static org.apache.commons.lang.Validate.isTrue;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Essa classe foi de certa forma inspirada na classe <code>Either</code> de
@@ -70,6 +71,19 @@ public class Either<L, R> {
         } else {
             rightFunction.accept(right);
         }
+    }
+
+    /**
+     * Executa a função da esquerda se esse {@code Either} retornar {@code true} para o método {@code isLeft}. Caso
+     * contrário, executa a função da direita se esse {@code Either} retornar {@code true} para o método
+     * {@code isRight}. Retona o resultado da função aplicada.
+     */
+    public <T> T fold(Function<L, T> leftFunction, Function<R, T> rightFunction) {
+        if (isLeft()) {
+            return leftFunction.apply(left);
+        }
+
+        return rightFunction.apply(right);
     }
 
     @Override

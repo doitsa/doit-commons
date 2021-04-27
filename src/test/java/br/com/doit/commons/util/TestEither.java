@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class TestEither {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void applyCorrectFunctionWhenFolding() throws Exception {
+    public void applyCorrectFunctionWhenFoldingWithConsumer() throws Exception {
         Consumer<Object> leftFunction = mock(Consumer.class);
         Consumer<Object> rightFunction = mock(Consumer.class);
 
@@ -65,6 +66,20 @@ public class TestEither {
 
         verify(rightFunction, rightFoldingOccurence).accept(Mockito.any());
         verify(leftFunction, leftFoldingOccurrence).accept(Mockito.any());
+    }
+
+    @Test
+    public void applyCorrectFunctionWhenFoldingWithFunction() throws Exception {
+        Function<Object, String> leftFunction = o -> "left";
+        Function<Object, String> rightFunction = o -> "right";
+
+        String result = either.fold(leftFunction, rightFunction);
+
+        if (isLeft) {
+            assertThat(result, is("left"));
+        } else {
+            assertThat(result, is("right"));
+        }
     }
 
     @Test
