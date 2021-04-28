@@ -2,7 +2,6 @@ package br.com.doit.commons.util;
 
 import static org.apache.commons.lang.Validate.isTrue;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -58,19 +57,6 @@ public class Either<L, R> {
 
     public boolean isLeft() {
         return left != null;
-    }
-
-    /**
-     * Executa a função da esquerda se esse {@code Either} retornar {@code true} para o método {@code isLeft}. Caso
-     * contrário, executa a função da direita se esse {@code Either} retornar {@code true} para o método
-     * {@code isRight}.
-     */
-    public void fold(Consumer<L> leftFunction, Consumer<R> rightFunction) {
-        if (isLeft()) {
-            leftFunction.accept(left);
-        } else {
-            rightFunction.accept(right);
-        }
     }
 
     /**
