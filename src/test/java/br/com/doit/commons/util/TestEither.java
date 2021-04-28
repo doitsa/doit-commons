@@ -1,10 +1,14 @@
 package br.com.doit.commons.util;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,15 +32,18 @@ public class TestEither {
         });
     }
 
+    private final String type;
     private final Either<Object, Object> either;
     private final Object left;
     private final boolean isLeft;
     private final boolean isRight;
     private final Object right;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     public TestEither(String type, Either<Object, Object> either, boolean isRight, boolean isLeft, Object right, Object left) {
+        this.type = type;
         this.either = either;
         this.isRight = isRight;
         this.isLeft = isLeft;
@@ -45,14 +52,20 @@ public class TestEither {
     }
 
     @Test
-    public void applyCorrectFunctionWhenFoldingWithFunction() throws Exception {
-        String result = either.fold(o -> "left", o -> "right");
+    public void applyCorrectFunctionWhenFolding() throws Exception {
+        String result = either.fold(o -> "Failure", o -> "Success");
 
-        if (isLeft) {
-            assertThat(result, is("left"));
-        } else {
-            assertThat(result, is("right"));
-        }
+        assertThat(result, is(type));
+    }
+
+    @Test
+    public void acceptCorrectConsumerWhenRunning() throws Exception {
+        // This is a workaround because we can't set a variable from inside a lambda expression
+        List<String> result = new ArrayList<>();
+
+        either.run(o -> result.add("Failure"), o -> result.add("Success"));
+
+        assertThat(result, hasItem(type));
     }
 
     @Test
@@ -63,16 +76,27 @@ public class TestEither {
 
     @Test
     public void returnExpectedLeftOrRight() throws Exception {
-        assertThat(either.left(), is(left));
-        assertThat(either.right(), is(right));
+        if(either.isLeft()) {
+            assertThat(either.left(), is(left));
+        } else {
+            assertThat(either.right(), is(right));
+        }
     }
 
     @Test
-    public void throwExceptionWhenCreatingEitherWithBothLeftAndRightNull() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(is("Either must have a left or a right. Left: null. Right: null."));
+    public void throwExceptionWhenGettingRightFromLeft() throws Exception {
+        thrown.expect(NoSuchElementException.class);
+        thrown.expectMessage(is("Cannot get a Right from a Left."));
 
-        Either.right(null);
+        Either.left("ABC").right();
+    }
+
+    @Test
+    public void throwExceptionWhenGettingLeftFromRight() throws Exception {
+        thrown.expect(NoSuchElementException.class);
+        thrown.expectMessage(is("Cannot get a Left from a Right."));
+
+        Either.right("ABC").left();
     }
 
     @Test
