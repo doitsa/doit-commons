@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -122,6 +123,7 @@ public class TestCells {
                 Integer.class,
                 BigDecimal.class,
                 NSTimestamp.class,
+                LocalDate.class,
                 Boolean.class
         };
 
@@ -183,6 +185,16 @@ public class TestCells {
         Integer result = Cells.toInteger(cell);
 
         assertThat(result, is(10));
+    }
+
+    @Test
+    public void returnLocalDateWhenConvertingToObjectWithTypeLocalDate() throws Exception {
+        Date date = new Date();
+        when(cell.getDateCellValue()).thenReturn(date);
+
+        LocalDate result = Cells.toObject(cell, LocalDate.class);
+
+        assertThat(result, is(LocalDate.now()));
     }
 
     private <T> void verifyObjectConversion(Class<T> type, Object[][] parameters) {
