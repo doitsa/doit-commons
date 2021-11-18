@@ -5,7 +5,6 @@ import static org.apache.commons.lang.BooleanUtils.toIntegerObject;
 import static org.apache.commons.lang.StringUtils.lowerCase;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import com.webobjects.foundation.NSTimestamp;
 
 import br.com.doit.commons.l10n.Messages;
-import br.com.doit.commons.time.DateUtils;
 
 /**
  * Classe utilitária com métodos auxiliares para manipular células de uma planilha do Excel.
@@ -128,18 +126,6 @@ class Cells {
     }
 
     /**
-     * Converte o valor de uma célula do Excel para <code>LocalDate</code>.
-     *
-     * @param cell
-     *            Uma célula de uma planilha do Excel.
-     * @return Retorna o valor da célula como <code>LocalDate</code> ou <code>null</code> caso o valor da célula seja
-     *         vazio.
-     */
-    public static LocalDate toLocalDate(Cell cell) {
-        return DateUtils.toLocalDate(cell.getDateCellValue());
-    }
-
-    /**
      * Converte o valor de uma célula do Excel para <code>Integer</code>.
      *
      * @param cell
@@ -220,10 +206,6 @@ class Cells {
 
         if (NSTimestamp.class.isAssignableFrom(type)) {
             return (T) toDate(cell);
-        }
-
-        if (LocalDate.class.isAssignableFrom(type)) {
-            return (T) toLocalDate(cell);
         }
 
         return (T) toString(cell);
