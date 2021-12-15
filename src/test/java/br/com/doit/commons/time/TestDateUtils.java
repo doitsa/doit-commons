@@ -8,8 +8,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.Test;
 
@@ -203,6 +205,36 @@ public class TestDateUtils {
     @Test
     public void returnNullNSTimestampWhenConvertingFromNullLocalDate() throws Exception {
         NSTimestamp result = DateUtils.toNSTimestamp((LocalDate) null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void createOffsetDateTimeWithDefaultTimeZoneOffsetWhenConvertingFromDate() throws Exception {
+        TimeZone timezoneBefore = TimeZone.getDefault();
+        TimeZone timezone = TimeZone.getTimeZone("America/Sao_Paulo");
+        TimeZone.setDefault(timezone);
+        Date date = new Date();
+
+        OffsetDateTime result = DateUtils.toOffsetDateTime(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        assertThat(result.getYear(), is(calendar.get(Calendar.YEAR)));
+        assertThat(result.getMonthValue(), is(calendar.get(Calendar.MONTH) + 1));
+        assertThat(result.getDayOfMonth(), is(calendar.get(Calendar.DAY_OF_MONTH)));
+        assertThat(result.getHour(), is(calendar.get(Calendar.HOUR_OF_DAY)));
+        assertThat(result.getMinute(), is(calendar.get(Calendar.MINUTE)));
+        assertThat(result.getSecond(), is(calendar.get(Calendar.SECOND)));
+        assertThat(result.getOffset().getTotalSeconds(), is(timezone.getOffset(date.getTime()) / 1000));
+
+        TimeZone.setDefault(timezoneBefore);
+    }
+
+    @Test
+    public void returnNullWhenConvertingFromNullDateToOffsetDateTime() throws Exception {
+        OffsetDateTime result = DateUtils.toOffsetDateTime(null);
 
         assertThat(result, nullValue());
     }

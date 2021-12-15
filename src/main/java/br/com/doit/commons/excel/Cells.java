@@ -6,6 +6,8 @@ import static org.apache.commons.lang.StringUtils.lowerCase;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,6 +142,32 @@ class Cells {
     }
 
     /**
+     * Converte o valor de uma célula do Excel para <code>LocalDateTime</code>.
+     *
+     * @param cell
+     *            Uma célula de uma planilha do Excel.
+     * @return Retorna o valor da célula como <code>LocalDateTime</code> ou <code>null</code> caso o valor da célula
+     *         seja
+     *         vazio.
+     */
+    public static LocalDateTime toLocalDateTime(Cell cell) {
+        return DateUtils.toLocalDateTime(cell.getDateCellValue());
+    }
+
+    /**
+     * Converte o valor de uma célula do Excel para <code>OffsetDateTime</code>.
+     *
+     * @param cell
+     *            Uma célula de uma planilha do Excel.
+     * @return Retorna o valor da célula como <code>OffsetDateTime</code> ou <code>null</code> caso o valor da célula
+     *         seja
+     *         vazio.
+     */
+    public static OffsetDateTime toOffsetDateTime(Cell cell) {
+        return DateUtils.toOffsetDateTime(cell.getDateCellValue());
+    }
+
+    /**
      * Converte o valor de uma célula do Excel para <code>Integer</code>.
      *
      * @param cell
@@ -224,6 +252,14 @@ class Cells {
 
         if (LocalDate.class.isAssignableFrom(type)) {
             return (T) toLocalDate(cell);
+        }
+
+        if (LocalDateTime.class.isAssignableFrom(type)) {
+            return (T) toLocalDateTime(cell);
+        }
+
+        if (OffsetDateTime.class.isAssignableFrom(type)) {
+            return (T) toOffsetDateTime(cell);
         }
 
         return (T) toString(cell);
