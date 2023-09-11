@@ -1,11 +1,13 @@
 package br.com.doit.commons.text;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableDictionary;
-
-import org.apache.commons.lang.StringUtils;
 
 public class LabelerUtils {
 
@@ -29,6 +31,9 @@ public class LabelerUtils {
 
             NSDictionary<String, Object> data = new NSMutableDictionary<>();
 
+            if (address.contains("Denmark (DNK)")) {
+                return denmarkFormatting(address, data);
+            }
             String[] addressSplited = address.split(", ");
 
             char firstCharacter = address.charAt(0);
@@ -69,6 +74,26 @@ public class LabelerUtils {
             LOGGER.log(java.util.logging.Level.ALL, "ERROR formatting address " + address + ", with country code " + countryCode);
             return null;
         }
+    }
+
+    private static Object denmarkFormatting(String address, NSDictionary<String, Object> data) {
+        String[] split = address.split(", ");
+        String[] addressSplit = split[0].split("\\s+");
+        String[] stateZip = split[2].split("\\s+");
+
+        String street = Arrays.stream(Arrays.copyOf(addressSplit, addressSplit.length - 1)).collect(Collectors.joining(" "));
+        String state = Arrays.stream(Arrays.copyOf(stateZip, stateZip.length - 1)).collect(Collectors.joining(" "));
+
+        data.put(STREET_NAME_KEY, street);
+        data.put(STREET_NUM_KEY, addressSplit[addressSplit.length - 1]);
+        data.put(ZIP_CODE_KEY, stateZip[stateZip.length - 1]);
+        if (!state.equals("Denmark")) {
+            data.put(STATE_KEY, state);
+        }
+        data.put(CITY_KEY, split[1]);
+        data.put(COUNTRY_KEY, split[3]);
+
+        return data;
     }
 
     public static boolean validateAddress(String address, String countryCode) {
