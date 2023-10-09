@@ -5,10 +5,13 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -235,6 +238,33 @@ public class TestDateUtils {
     @Test
     public void returnNullWhenConvertingFromNullDateToOffsetDateTime() throws Exception {
         OffsetDateTime result = DateUtils.toOffsetDateTime(null);
+
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void returnNSTimestampWhenConvertingFromOffsetDateTime() throws Exception {
+        Instant instant = Instant.now();
+        ZoneId systemZone = ZoneId.systemDefault();
+        ZoneOffset currentOffset = systemZone.getRules().getOffset(instant);
+        OffsetDateTime offsetDateTime = OffsetDateTime.of(2016, 5, 3, 10, 56, 2, 0, currentOffset);
+        NSTimestamp result = DateUtils.toNSTimestamp(offsetDateTime);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(2016));
+        assertThat(calendar.get(Calendar.MONTH), is(4));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(3));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(10));
+        assertThat(calendar.get(Calendar.MINUTE), is(56));
+        assertThat(calendar.get(Calendar.SECOND), is(2));
+    }
+
+    @Test
+    public void returnNullNSTimestampWhenConvertingFromNullOffsetDateTime() throws Exception {
+        NSTimestamp result = DateUtils.toNSTimestamp((OffsetDateTime) null);
 
         assertThat(result, nullValue());
     }

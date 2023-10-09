@@ -67,6 +67,23 @@ public class DateUtils {
     }
 
     /**
+     * Converte um {@code java.time.OffsetDateTime} para {@code java.util.Date} usando o offset definido pelo
+     * {@code java.time.OffsetDateTime}.
+     *
+     * @param offsetDateTime
+     *            Uma data/hora (pode ser nula).
+     * @return Retorna um {@code java.util.Date} para a data/hora informada ou {@code null} caso nenhuma data tenha sido
+     *         informada.
+     */
+    public static Date toDateTime(OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null) {
+            return null;
+        }
+
+        return Date.from(offsetDateTime.toInstant());
+    }
+
+    /**
      * Converte um {@code java.util.Date} para {@code java.time.LocalDateTime} usando o timezone definido pelo sistema.
      *
      * @param date
@@ -155,6 +172,23 @@ public class DateUtils {
         }
 
         return new NSTimestamp(toDate(localDate));
+    }
+
+    /**
+     * Converte um {@code java.time.OffsetDateTime} para {@code com.webobjects.foundation.NSTimestamp} usando o offset
+     * definido pelo {@code java.time.OffsetDateTime}.
+     *
+     * @param offsetDateTime
+     *            Uma data/hora (pode ser nula).
+     * @return Retorna um {@code com.webobjects.foundation.NSTimestamp} para a data/hora informada ou {@code null} caso
+     *         nenhuma data/hora tenha sido informada.
+     */
+    public static NSTimestamp toNSTimestamp(OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null) {
+            return null;
+        }
+
+        return new NSTimestamp(toDateTime(offsetDateTime));
     }
 
     /**
