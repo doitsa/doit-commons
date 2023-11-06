@@ -236,6 +236,29 @@ public class TestDateUtils {
     }
 
     @Test
+    public void createOffsetDateTimeWithGivenZoneIdWhenConvertingFromDate() throws Exception {
+        TimeZone timezoneBefore = TimeZone.getDefault();
+        TimeZone timezone = TimeZone.getTimeZone("US/Eastern");
+        TimeZone.setDefault(timezone);
+        Date date = new Date(1699311985580L);
+
+        OffsetDateTime result = DateUtils.toOffsetDateTime(date, ZoneId.of("US/Pacific"));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        assertThat(result.getYear(), is(calendar.get(Calendar.YEAR)));
+        assertThat(result.getMonthValue(), is(calendar.get(Calendar.MONTH) + 1));
+        assertThat(result.getDayOfMonth(), is(calendar.get(Calendar.DAY_OF_MONTH)));
+        assertThat(result.getHour(), is(calendar.get(Calendar.HOUR_OF_DAY) - 3));
+        assertThat(result.getMinute(), is(calendar.get(Calendar.MINUTE)));
+        assertThat(result.getSecond(), is(calendar.get(Calendar.SECOND)));
+        assertThat(result.getOffset().getTotalSeconds(), is(-28800));
+
+        TimeZone.setDefault(timezoneBefore);
+    }
+
+    @Test
     public void returnNullWhenConvertingFromNullDateToOffsetDateTime() throws Exception {
         OffsetDateTime result = DateUtils.toOffsetDateTime(null);
 

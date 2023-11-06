@@ -200,12 +200,26 @@ public class DateUtils {
      *         sido informada.
      */
     public static OffsetDateTime toOffsetDateTime(Date date) {
+        return toOffsetDateTime(date, ZoneId.systemDefault());
+    }
+
+    /**
+     * Converte um {@code java.util.Date} para {@code java.time.OffsetTime} usando o timezone passado por parâmetro.
+     *
+     * @param date
+     *            Uma data (pode ser nula).
+     * @param zoneId
+     *            Um timezone.
+     * @return Retorna um {@code java.time.OffsetTime} para a data informada ou {@code null} caso nenhuma data tenha
+     *         sido informada.
+     */
+    public static OffsetDateTime toOffsetDateTime(Date date, ZoneId zoneId) {
         if (date == null) {
             return null;
         }
 
         Instant instant = date.toInstant();
-        ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(instant);
+        ZoneOffset offset = zoneId.getRules().getOffset(instant);
 
         return instant.atOffset(offset);
     }
