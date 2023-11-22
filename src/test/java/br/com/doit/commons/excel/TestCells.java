@@ -1,5 +1,6 @@
 package br.com.doit.commons.excel;
 
+import static br.com.doit.commons.time.DateUtils.toLocalDateTime;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -7,6 +8,9 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -124,6 +128,8 @@ public class TestCells {
                 BigDecimal.class,
                 NSTimestamp.class,
                 LocalDate.class,
+                LocalDateTime.class,
+                OffsetDateTime.class,
                 Boolean.class
         };
 
@@ -195,6 +201,35 @@ public class TestCells {
         LocalDate result = Cells.toObject(cell, LocalDate.class);
 
         assertThat(result, is(LocalDate.now()));
+    }
+
+    @Test
+    public void returnLocalDateTimeWhenConvertingToObjectWithTypeLocalDateTime() throws Exception {
+        Date date = new Date();
+        when(cell.getDateCellValue()).thenReturn(date);
+
+        LocalDateTime result = Cells.toObject(cell, LocalDateTime.class);
+
+        assertThat(result, is(toLocalDateTime(date)));
+    }
+
+    @Test
+    public void returnOffsetDateTimeWhenConvertingToObjectWithTypeOffsetDateTime() throws Exception {
+        Date date = new Date();
+        when(cell.getDateCellValue()).thenReturn(date);
+
+        OffsetDateTime result = Cells.toObject(cell, OffsetDateTime.class);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(date);
+
+        assertThat(result.getYear(), is(calendar.get(Calendar.YEAR)));
+        assertThat(result.getMonthValue(), is(calendar.get(Calendar.MONTH) + 1));
+        assertThat(result.getDayOfMonth(), is(calendar.get(Calendar.DAY_OF_MONTH)));
+        assertThat(result.getHour(), is(calendar.get(Calendar.HOUR_OF_DAY)));
+        assertThat(result.getMinute(), is(calendar.get(Calendar.MINUTE)));
+        assertThat(result.getSecond(), is(calendar.get(Calendar.SECOND)));
     }
 
     private <T> void verifyObjectConversion(Class<T> type, Object[][] parameters) {
