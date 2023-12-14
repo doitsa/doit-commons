@@ -96,6 +96,11 @@ public class LabelerUtils {
         return data;
     }
 
+    /**
+     * This method validates if the address is formatable
+     * THIS METHOS RETURNS TRUE IF THE ADDRESS IS NOT FORMATABLE
+     *
+     */
     public static boolean validateAddress(String address, String countryCode) {
         return formatAddress(address, countryCode) == null;
     }
