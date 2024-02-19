@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * A classe <code>MathUtils</code> contém funções auxiliares para lidar com operações matemáticas.
- * 
+ *
  * @see Fraction
  * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
  */
@@ -26,7 +26,7 @@ public class MathUtils {
     /**
      * Essa classe será usada em conjunto com a operação de distribuição de um valor. Ela não deve ser usada de forma
      * isolada.
-     * 
+     *
      * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
      */
     public static final class Preparation {
@@ -50,14 +50,14 @@ public class MathUtils {
         /**
          * Distribui um valor de forma proporcional entre o conjunto de <code>Fraction</code>s que formam o todo.
          * Exemplo de uso:
-         * 
+         *
          * <pre>
          * MathUtils.distribute(new BigDecimal(2)).over(collectionOfFractions);
          * </pre>
-         * 
+         *
          * @param whole
          *            Uma coleção de <code>Fraction</code>s que representam o todo
-         * 
+         *
          * @return Caso esteja utilizando o <code>Mode</code> do tipo <code>RETURNING_REMAINDER</code> será retornado o
          *         valor do resto.
          *         Caso esteja utilizando o <code>Mode</code> do tipo <code>IGNORING_QUANTITY</code> será feito a
@@ -80,7 +80,13 @@ public class MathUtils {
             for (Fraction fraction : whole) {
                 BigDecimal ratio = amount.multiply(fraction.value()).divide(total, 2, RoundingMode.FLOOR);
 
-                BigDecimal share = ratio.multiply(fraction.quantity()).setScale(2, RoundingMode.HALF_EVEN);
+                BigDecimal share = ratio.multiply(fraction.quantity()).setScale(2, RoundingMode.FLOOR);
+
+                if (ZERO.compareTo(share) != 0) {
+                    BigDecimal aux = share.divide(fraction.quantity(), 2, RoundingMode.FLOOR);
+
+                    share = aux.multiply(fraction.quantity()).setScale(2, RoundingMode.FLOOR);
+                }
 
                 shares.put(fraction, share);
 
@@ -92,9 +98,7 @@ public class MathUtils {
             for (Fraction fraction : whole) {
                 BigDecimal share = shares.get(fraction);
 
-                if (mode != STRICTLY_PROPORTIONAL
-                        &&
-                        (isRemainderDivisibleByQuantity(remainder, fraction.quantity()) || mode == IGNORING_QUANTITY)) {
+                if (mode != STRICTLY_PROPORTIONAL && (isRemainderDivisibleByQuantity(remainder, fraction.quantity()) || mode == IGNORING_QUANTITY)) {
 
                     BigDecimal subtotal = fraction.value().multiply(fraction.quantity());
 
@@ -141,7 +145,7 @@ public class MathUtils {
 
     /**
      * Os modos de distribuição do resto, caso a distribuição pró-rata não seja exata.
-     * 
+     *
      * @author <a href="mailto:hprange@gmail.com.br">Henrique Prange</a>
      */
     public enum RemainderDistributionMode {
@@ -184,11 +188,11 @@ public class MathUtils {
     /**
      * Distribui um valor de forma proporcional entre o conjunto de <code>Fraction</code>s que formam o todo. Ignora o
      * resto caso a divisão proporcional não seja exata. Exemplo de uso:
-     * 
+     *
      * <pre>
      * MathUtils.distribute(new BigDecimal(2)).over(collectionOfFractions);
      * </pre>
-     * 
+     *
      * @param amount
      *            o valor que será distribuído entre as <code>Fraction</code>s que compõem o todo
      */
@@ -199,11 +203,11 @@ public class MathUtils {
     /**
      * Distribui um valor de forma proporcional entre o conjunto de <code>Fraction</code>s que formam o todo. Caso a
      * operação gere um resto, este será distribuído de acordo com o modo fornecido por parâmetro. Exemplo de uso:
-     * 
+     *
      * <pre>
      * MathUtils.distribute(new BigDecimal(2), Mode.IGNORING_QUANTITY).over(collectionOfFractions);
      * </pre>
-     * 
+     *
      * @param amount
      *            o valor que será distribuído entre as <code>Fraction</code>s que compõem o todo
      * @param mode
