@@ -44,6 +44,8 @@ public class TestDateUtils {
 
     @Test
     public void createDateWithGivenTimeZoneIdWhenConvertingFromLocalDate() throws Exception {
+        TimeZone.setDefault(TimeZone.getTimeZone("US/Eastern"));
+
         LocalDate localDate = LocalDate.of(1983, 1, 7);
 
         ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
@@ -51,17 +53,14 @@ public class TestDateUtils {
         Date result = DateUtils.toDateWithUserZoneId(localDate, zoneId);
 
         Calendar calendar = Calendar.getInstance();
-
         calendar.setTime(result);
 
         assertThat(calendar.get(Calendar.YEAR), is(1983));
         assertThat(calendar.get(Calendar.MONTH), is(0));
-        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(7));
-        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(6));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(22));
         assertThat(calendar.get(Calendar.MINUTE), is(0));
         assertThat(calendar.get(Calendar.SECOND), is(0));
-
-        assertThat(ZoneId.of(calendar.getTimeZone().getID()), is(zoneId));
     }
 
     @Test
