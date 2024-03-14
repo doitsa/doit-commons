@@ -144,4 +144,10 @@ public class TestTextNormalizerUtils {
 
     }
 
+    @Test
+    public void stripNonAlphanumericCharsForProducts() throws Exception {
+        String result = TextNormalizerUtils.stripNonAlphanumericCharsForProducts("Product 0.5%/0,5ml \r\n\t `~@#$ˆ&*()_-+={[}]|\\:;\"'<>?");
+
+        assertThat(result, is("Product 0.5%/0,5ml"));
+    }
 }

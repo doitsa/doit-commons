@@ -111,4 +111,21 @@ public class TextNormalizerUtils {
      */
     private TextNormalizerUtils() {
     }
+
+    /**
+     * Remove caracteres não alfanuméricos do texto exceto os frequentemente utilizados para representar informações de produto (espaços, ponto, vírgula, porcentagem e
+     * barra invertida são mantidos).
+     * 
+     * @param text
+     *            O texto que deverá ser tratado
+     * @return Retorna o texto tratado
+     */
+    public static String stripNonAlphanumericCharsForProducts(String text) {
+        if (text == null) {
+            return null;
+        }
+
+        return stripChars(stripChars(toAscii(text), "[^a-zA-Z0-9\\s\\.,%/]"), "[\\n\\r\\t]").trim();
+    }
 }
+
