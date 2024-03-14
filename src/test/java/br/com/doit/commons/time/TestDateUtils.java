@@ -2,6 +2,7 @@ package br.com.doit.commons.time;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +41,37 @@ public class TestDateUtils {
         assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
         assertThat(calendar.get(Calendar.MINUTE), is(0));
         assertThat(calendar.get(Calendar.SECOND), is(0));
+    }
+
+    @Test
+    public void createDateWithGivenTimeZoneIdWhenConvertingFromLocalDate() throws Exception {
+        LocalDate localDate = LocalDate.of(1983, 1, 7);
+
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+
+        Date result = DateUtils.toDateWithUserZoneId(localDate, zoneId);
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(result);
+
+        assertThat(calendar.get(Calendar.YEAR), is(1983));
+        assertThat(calendar.get(Calendar.MONTH), is(0));
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH), is(7));
+        assertThat(calendar.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(calendar.get(Calendar.MINUTE), is(0));
+        assertThat(calendar.get(Calendar.SECOND), is(0));
+
+        assertEquals(zoneId, ZoneId.of(calendar.getTimeZone().getID()));
+    }
+
+    @Test
+    public void returnNullWhenCovertingFromLocalDateAndNullZoneToDate() throws Exception {
+        LocalDate localDate = LocalDate.of(1983, 1, 7);
+
+        Date result = DateUtils.toDateWithUserZoneId(localDate, null);
+
+        assertThat(result, nullValue());
     }
 
     @Test

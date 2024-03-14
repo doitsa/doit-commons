@@ -35,6 +35,22 @@ public class DateUtils {
     }
 
     /**
+     * Converte um {@code java.time.LocalDate} para {@code java.util.Date} usando o zone id passado por parâmetro.
+     *
+     * @param localDate
+     *            Uma data (pode ser nula).
+     * @return Retorna um {@code java.util.Date} para a data informada ou {@code null} caso nenhuma data ou zone id
+     *         tenham sido informados.
+     */
+    public static Date toDateWithUserZoneId(LocalDate localDate, ZoneId zoneId) {
+        if (localDate == null || zoneId == null) {
+            return null;
+        }
+
+        return Date.from(localDate.atStartOfDay(zoneId).toInstant());
+    }
+
+    /**
      * Converte um {@code java.util.Date} para {@code java.time.LocalDate} usando o timezone definido pelo sistema.
      *
      * @param date
