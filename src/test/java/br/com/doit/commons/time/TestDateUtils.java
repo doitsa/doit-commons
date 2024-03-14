@@ -2,7 +2,6 @@ package br.com.doit.commons.time;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.text.SimpleDateFormat;
@@ -62,7 +61,7 @@ public class TestDateUtils {
         assertThat(calendar.get(Calendar.MINUTE), is(0));
         assertThat(calendar.get(Calendar.SECOND), is(0));
 
-        assertEquals(zoneId.getId(), ZoneId.of(calendar.getTimeZone().getID()).getId());
+        assertThat(ZoneId.of(calendar.getTimeZone().getID()), is(zoneId));
     }
 
     @Test
