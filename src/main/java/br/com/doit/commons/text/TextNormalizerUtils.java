@@ -114,7 +114,7 @@ public class TextNormalizerUtils {
 
     /**
      * Remove caracteres não alfanuméricos do texto exceto os frequentemente utilizados para representar informações de produto (espaços, ponto, vírgula, porcentagem e
-     * barra invertida são mantidos).
+     * barra são mantidos).
      * 
      * @param text
      *            O texto que deverá ser tratado
