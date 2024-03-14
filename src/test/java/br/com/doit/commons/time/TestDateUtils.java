@@ -62,7 +62,7 @@ public class TestDateUtils {
         assertThat(calendar.get(Calendar.MINUTE), is(0));
         assertThat(calendar.get(Calendar.SECOND), is(0));
 
-        assertEquals(zoneId, ZoneId.of(calendar.getTimeZone().getID()));
+        assertEquals(zoneId.getId(), ZoneId.of(calendar.getTimeZone().getID()).getId());
     }
 
     @Test
