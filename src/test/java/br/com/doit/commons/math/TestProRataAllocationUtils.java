@@ -231,9 +231,33 @@ public class TestProRataAllocationUtils {
 
         BigDecimal remainder = MathUtils.distribute(new BigDecimal("3539"), IGNORING_QUANTITY).over(whole);
 
-        verify(fraction).setShare(new BigDecimal("402.44"));
-        verify(fraction2).setShare(new BigDecimal("3136.56"));
+        verify(fraction).setShare(new BigDecimal("402.71"));
+        verify(fraction2).setShare(new BigDecimal("3136.29"));
         assertThat(remainder, is(ZERO));
+    }
+
+    @Test
+    public void roundShareWhenDistributingDecimalFractions2() throws Exception {
+        Fraction fraction = addFraction(new BigDecimal("1.5"), new BigDecimal("276"));
+        Fraction fraction2 = addFraction(ONE, new BigDecimal("23"));
+
+        BigDecimal remainder = MathUtils.distribute(new BigDecimal("0.37")).over(whole);
+
+        verify(fraction).setShare(new BigDecimal("0.36"));
+        verify(fraction2).setShare(new BigDecimal("0.01"));
+        assertThat(remainder, is(new BigDecimal("0")));
+    }
+
+    @Test
+    public void roundShareWhenDistributingPrimeNumbersFractions() throws Exception {
+        Fraction fraction = addFraction(new BigDecimal("7"), new BigDecimal("13"));
+        Fraction fraction2 = addFraction(new BigDecimal("11"), new BigDecimal("3"));
+
+        BigDecimal remainder = MathUtils.distribute(new BigDecimal("0.37")).over(whole);
+
+        verify(fraction).setShare(new BigDecimal("0.21"));
+        verify(fraction2).setShare(new BigDecimal("0.00"));
+        assertThat(remainder, is(new BigDecimal("0.16")));
     }
 
     @Before
