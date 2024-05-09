@@ -151,11 +151,11 @@ public class ExcelImporter {
 
                     String columnName = cell.getStringCellValue();
 
-                    if (!config.containsKey(columnName)) {
+                    if (!config.containsKey(columnName.toUpperCase())) {
                         throw new ExcelImporterException(messages.format(UNRECOGNISABLE_COLUMN, columnName));
                     }
 
-                    columnNames.add(columnName);
+                    columnNames.add(columnName.toUpperCase());
                 }
             }
 
