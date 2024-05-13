@@ -69,6 +69,27 @@ public class TestExcelImporter {
     }
 
     @Test
+    public void extractDataEvenWhenHeaderTextIsInLowerCaseWhenProcessingSpreadsheet() throws Exception {
+        URL url = getClass().getResource("/importer/case_insensitive.xlsx");
+
+        Map<String, Object> result = importer.extractRows(url).get(0);
+
+        assertThat(result.containsKey("NAME"), is(true));
+        assertThat(result.containsKey("AMOUNT"), is(true));
+        assertThat(result.containsKey("DATE"), is(true));
+        assertThat(result.containsKey("CURRENCY"), is(true));
+        assertThat(result.containsKey("BOOLEAN"), is(true));
+
+        NSTimestamp expectedDate = new NSTimestamp(new LocalDate(2014, 10, 10).toDateTimeAtStartOfDay().toDate());
+
+        assertThat(result.get("NAME"), is((Object) "John Doe"));
+        assertThat(result.get("AMOUNT"), is((Object) 123));
+        assertThat(result.get("DATE"), is((Object) expectedDate));
+        assertThat(result.get("CURRENCY"), is((Object) new BigDecimal("1500.5")));
+        assertThat(result.get("BOOLEAN"), is((Object) true));
+    }
+
+    @Test
     public void extractOneLineOfDataWhenProcessingSpreadsheet() throws Exception {
         URL url = getClass().getResource("/importer/one_line.xlsx");
 
