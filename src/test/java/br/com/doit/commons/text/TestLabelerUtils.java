@@ -1,13 +1,14 @@
 package br.com.doit.commons.text;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.webobjects.foundation.NSDictionary;
-
 import org.junit.Test;
+
+import com.webobjects.foundation.NSDictionary;
 
 public class TestLabelerUtils {
     @Test
@@ -158,13 +159,13 @@ public class TestLabelerUtils {
     }
 
     /**
-     * validateAddress still returns true for unparseable addresses
-     * (addresses that only produce a fallback streetName map).
+     * validateAddress returns false for addresses that produce a fallback map
+     * (any non-null address always returns an NSDictionary now).
      */
     @Test
-    public void validateAddressReturnsTrueForUnparseableAddress() {
+    public void validateAddressReturnsFalseForPartialUnparseableAddress() {
         String address = "5 Giralda Farms, Dodge Dr, Madison, NJ 07940";
-        assertTrue(LabelerUtils.validateAddress(address, "USA"));
+        assertFalse(LabelerUtils.validateAddress(address, "USA"));
     }
 
     /**
@@ -173,6 +174,14 @@ public class TestLabelerUtils {
     @Test
     public void validateAddressReturnsFalseForParseableAddress() {
         String address = "911 North Davis Avenue, Cleveland, Mississippi (MS) 38732, United States (USA)";
-        assertTrue(!LabelerUtils.validateAddress(address, "USA"));
+        assertFalse(LabelerUtils.validateAddress(address, "USA"));
+    }
+
+    /**
+     * validateAddress returns true only for null input (returns empty string, not NSDictionary).
+     */
+    @Test
+    public void validateAddressReturnsTrueForNullInput() {
+        assertTrue(LabelerUtils.validateAddress(null, "USA"));
     }
 }

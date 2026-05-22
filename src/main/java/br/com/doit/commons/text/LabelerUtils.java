@@ -140,16 +140,7 @@ public class LabelerUtils {
      * This method validates if the address is formatable.
      * THIS METHOD RETURNS TRUE IF THE ADDRESS IS NOT FORMATABLE.
      */
-    @SuppressWarnings("unchecked")
     public static boolean validateAddress(String address, String countryCode) {
-        Object result = formatAddress(address, countryCode);
-
-        if (!(result instanceof NSDictionary)) {
-            return true;
-        }
-
-        NSDictionary<String, Object> data = (NSDictionary<String, Object>) result;
-
-        return !data.containsKey(CITY_KEY) && !data.containsKey(STATE_KEY) && !data.containsKey(ZIP_CODE_KEY);
+        return !(formatAddress(address, countryCode) instanceof NSDictionary);
     }
 }
