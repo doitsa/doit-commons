@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,7 +58,11 @@ public class TestExcelImporter {
         assertThat(result.containsKey("CURRENCY"), is(true));
         assertThat(result.containsKey("BOOLEAN"), is(true));
 
-        NSTimestamp expectedDate = new NSTimestamp(new LocalDate(2014, 10, 10).toDateTimeAtStartOfDay().toDate());
+        NSTimestamp expectedDate = new NSTimestamp(
+                java.time.LocalDate.of(2014, 10, 10)
+                                   .atStartOfDay(java.time.ZoneId.systemDefault())
+                                   .toInstant()
+                                   .toEpochMilli());
 
         assertThat(result.get("NAME"), is((Object) "John Doe"));
         assertThat(result.get("AMOUNT"), is((Object) 123));
@@ -80,7 +83,11 @@ public class TestExcelImporter {
         assertThat(result.containsKey("CURRENCY"), is(true));
         assertThat(result.containsKey("BOOLEAN"), is(true));
 
-        NSTimestamp expectedDate = new NSTimestamp(new LocalDate(2014, 10, 10).toDateTimeAtStartOfDay().toDate());
+        NSTimestamp expectedDate = new NSTimestamp(
+                java.time.LocalDate.of(2014, 10, 10)
+                                   .atStartOfDay(java.time.ZoneId.systemDefault())
+                                   .toInstant()
+                                   .toEpochMilli());
 
         assertThat(result.get("NAME"), is((Object) "John Doe"));
         assertThat(result.get("AMOUNT"), is((Object) 123));
