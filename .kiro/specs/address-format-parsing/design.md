@@ -4,6 +4,8 @@
 
 The `LabelerUtils.formatAddress` method fails when a 4-part address has the city and state combined in the second segment with the zip code alone in the third segment. The current code unconditionally looks for parentheses in `addressSplited[2]` to extract the state abbreviation and zip code, but in the alternative format `addressSplited[2]` is a plain zip code (e.g., `"07065"`), causing a `StringIndexOutOfBoundsException` that is caught and results in `null`. The fix adds format detection by checking whether `addressSplited[2]` contains `"("` — if it does not, the code uses the alternative parsing path that extracts state from `addressSplited[1]`.
 
+Additionally, the error handling has been improved: instead of returning `null` when any parsing fails, the `catch` block now returns a fallback dictionary with `streetName` set to the full address string. This ensures callers always receive a usable result. The `validateAddress` method was updated to check for the presence of structured fields (`city`, `state`, `zipCode`) rather than checking for `null`.
+
 ## Glossary
 
 - **Bug_Condition (C)**: The condition that triggers the bug — a 4-part comma-split address where `addressSplited[2]` does not contain `"("`, meaning the state is embedded in `addressSplited[1]` alongside the city
@@ -51,9 +53,10 @@ END FUNCTION
 - 5-part addresses must continue to parse correctly using the existing 5-part logic
 - Denmark-formatted addresses must continue to use the Denmark-specific formatting path
 - Null addresses must continue to return an empty string
-- The `validateAddress` method must continue to return `true` for unparseable addresses and `false` for parseable ones
+- The `validateAddress` method must continue to return `true` for unparseable addresses and `false` for parseable ones (now based on presence of structured fields rather than null check)
 - Street number extraction (digit-first addresses) must remain unchanged
 - Country code inclusion in the result dictionary must remain unchanged
+- Unparseable addresses now return a fallback dictionary with `streetName` = full address (instead of `null`)
 
 **Scope:**
 All inputs that do NOT match the alternative 4-part format (i.e., where `addressSplited[2]` contains `"("` or the address has a different number of segments) should be completely unaffected by this fix. This includes:
@@ -113,6 +116,10 @@ Assuming our root cause analysis is correct:
 4. **City Extraction from Combined Segment**: For the alternative format, the city is the portion of `addressSplited[1]` before the state name. This can be extracted by finding the position of `"("` in `addressSplited[1]`, then taking the substring before the state name that precedes the parenthesis. A practical approach: find the index of `" ("` in `addressSplited[1]`, then find the last space before that to separate city from state name, or take everything up to the state full name.
 
 5. **Trim Whitespace**: Apply `.trim()` to extracted values to handle leading/trailing spaces from the split.
+
+6. **Fallback on Exception**: Replace `return null` in the `catch` block with a fallback dictionary containing `streetName` set to the full address string and `countryCode` if provided. This ensures callers always get usable data.
+
+7. **Update validateAddress**: Change from `formatAddress(...) == null` to checking whether the result is an `NSDictionary` containing structured fields (`city`, `state`, `zipCode`). If none are present, the address is considered not formatable.
 
 ### Pseudocode
 

@@ -74,3 +74,11 @@
   - Run full test suite: `mvn test`
   - Ensure all tests pass including original `TestLabelerUtils`, new `TestLabelerUtilsAlternativeFormat`, and `TestLabelerUtilsPreservation`
   - Ask the user if questions arise
+
+- [x] 5. Fallback behavior for unparseable addresses
+  - Changed `catch` block in `formatAddress` to return a dictionary with `streetName` = full address string (+ `countryCode` if provided) instead of `null`
+  - Updated `validateAddress` to check for presence of structured fields (`city`, `state`, `zipCode`) using `!(result instanceof NSDictionary)` guard and key presence checks
+  - Updated tests: `returnNullIfFormatNotAccepted` → `returnFallbackMapIfFormatNotAccepted`, `preservationUnparseable4PartReturnsNull` → `preservationUnparseable4PartReturnsFallbackMap`
+  - Added `validateAddressReturnsTrueForUnparseableAddress` and `validateAddressReturnsFalseForParseableAddress` tests
+  - All 15 tests pass (11 in TestLabelerUtils + 4 in TestLabelerUtilsAlternativeFormat)
+  - _Requirements: 2.3, 2.4_

@@ -4,6 +4,8 @@
 
 The `LabelerUtils.formatAddress` method fails to correctly parse addresses where the 4-part comma-split produces a format with city+state combined in the second segment and zip code alone in the third segment. For example, the address `"126 East Lincoln Avenue P.O Box 2000, Rahway New Jersey (NJ), 07065, United States (USA)"` splits into `["126 East Lincoln Avenue P.O Box 2000", "Rahway New Jersey (NJ)", "07065", "United States (USA)"]`. The current `length == 4` branch expects the state abbreviation and zip code to be combined in `addressSplited[2]` (e.g., `"New Jersey (NJ) 07065"`), but in this format the state is part of `addressSplited[1]` alongside the city, and `addressSplited[2]` contains only the zip code. This causes a parsing failure (exception caught internally) and the method returns `null`.
 
+Additionally, the method's error handling has been improved: instead of returning `null` when parsing fails for any unrecognized format, it now returns a fallback dictionary with `streetName` set to the full address string. This ensures callers always receive usable data. The `validateAddress` method has been updated accordingly to detect unparseable addresses by checking for the absence of structured fields (`city`, `state`, `zipCode`) rather than checking for `null`.
+
 ## Bug Analysis
 
 ### Current Behavior (Defect)
@@ -17,6 +19,12 @@ The `LabelerUtils.formatAddress` method fails to correctly parse addresses where
 2.1 WHEN a 4-part address has the format `[street, city state(abbr), zipCode, country(code)]` THEN the system SHALL detect that `addressSplited[2]` does not contain `"("` and recognize this as the alternative format where the state is embedded in `addressSplited[1]`
 
 2.2 WHEN the alternative 4-part format is detected THEN the system SHALL extract the city from `addressSplited[1]` as the text before the state name, extract the state abbreviation from the parentheses in `addressSplited[1]`, use `addressSplited[2]` as the zip code, and extract the country from `addressSplited[3]`, returning a correctly populated dictionary
+
+### Fallback Behavior (Enhancement)
+
+2.3 WHEN any address parsing fails due to an unrecognized format (exception thrown internally) THEN the system SHALL return a dictionary with `streetName` set to the full original address string (and `countryCode` if provided) instead of returning `null`
+
+2.4 WHEN `validateAddress` is called THEN it SHALL return `true` (not formatable) if the result dictionary does not contain `city`, `state`, or `zipCode` keys, and `false` (formatable) otherwise
 
 ### Unchanged Behavior (Regression Prevention)
 
