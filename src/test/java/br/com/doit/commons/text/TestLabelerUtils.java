@@ -2,7 +2,6 @@ package br.com.doit.commons.text;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -36,12 +35,14 @@ public class TestLabelerUtils {
     }
 
     @Test
-    public void returnNullIfFormatNotAccepted() {
+    public void returnFallbackMapIfFormatNotAccepted() {
         String address = "5 Giralda Farms, Dodge Dr, Madison, NJ 07940";
         String countryCode = "USA";
 
         NSDictionary<String, Object> result = (NSDictionary<String, Object>) LabelerUtils.formatAddress(address, countryCode);
-        assertTrue(result == null);
+        assertNotNull(result);
+        assertThat(result.get("streetName"), is(address));
+        assertThat(result.get("countryCode"), is("USA"));
     }
 
     // ===== Preservation Property Tests =====
@@ -141,16 +142,37 @@ public class TestLabelerUtils {
 
     /**
      * **Validates: Requirements 3.1**
-     * Preservation: 4-part format without state abbreviation in parentheses returns null
-     * (this is the existing behavior for unparseable 4-part addresses).
+     * Preservation: 4-part format without state abbreviation in parentheses returns
+     * a fallback map with streetName set to the full address.
      */
     @Test
-    public void preservationUnparseable4PartReturnsNull() {
+    public void preservationUnparseable4PartReturnsFallbackMap() {
         String address = "5 Giralda Farms, Dodge Dr, Madison, NJ 07940";
         String countryCode = "USA";
 
-        Object result = LabelerUtils.formatAddress(address, countryCode);
+        NSDictionary<String, Object> result = (NSDictionary<String, Object>) LabelerUtils.formatAddress(address, countryCode);
 
-        assertNull(result);
+        assertNotNull(result);
+        assertThat(result.get("streetName"), is(address));
+        assertThat(result.get("countryCode"), is("USA"));
+    }
+
+    /**
+     * validateAddress still returns true for unparseable addresses
+     * (addresses that only produce a fallback streetName map).
+     */
+    @Test
+    public void validateAddressReturnsTrueForUnparseableAddress() {
+        String address = "5 Giralda Farms, Dodge Dr, Madison, NJ 07940";
+        assertTrue(LabelerUtils.validateAddress(address, "USA"));
+    }
+
+    /**
+     * validateAddress returns false for fully parseable addresses.
+     */
+    @Test
+    public void validateAddressReturnsFalseForParseableAddress() {
+        String address = "911 North Davis Avenue, Cleveland, Mississippi (MS) 38732, United States (USA)";
+        assertTrue(!LabelerUtils.validateAddress(address, "USA"));
     }
 }

@@ -104,7 +104,15 @@ public class LabelerUtils {
             return data;
         } catch (Exception e) {
             LOGGER.log(java.util.logging.Level.ALL, "ERROR formatting address " + address + ", with country code " + countryCode);
-            return null;
+
+            NSMutableDictionary<String, Object> fallback = new NSMutableDictionary<>();
+            fallback.put(STREET_NAME_KEY, address);
+
+            if (StringUtils.isNotEmpty(countryCode)) {
+                fallback.put("countryCode", countryCode);
+            }
+
+            return fallback;
         }
     }
 
@@ -129,11 +137,19 @@ public class LabelerUtils {
     }
 
     /**
-     * This method validates if the address is formatable
-     * THIS METHOS RETURNS TRUE IF THE ADDRESS IS NOT FORMATABLE
-     *
+     * This method validates if the address is formatable.
+     * THIS METHOD RETURNS TRUE IF THE ADDRESS IS NOT FORMATABLE.
      */
+    @SuppressWarnings("unchecked")
     public static boolean validateAddress(String address, String countryCode) {
-        return formatAddress(address, countryCode) == null;
+        Object result = formatAddress(address, countryCode);
+
+        if (!(result instanceof NSDictionary)) {
+            return true;
+        }
+
+        NSDictionary<String, Object> data = (NSDictionary<String, Object>) result;
+
+        return !data.containsKey(CITY_KEY) && !data.containsKey(STATE_KEY) && !data.containsKey(ZIP_CODE_KEY);
     }
 }
