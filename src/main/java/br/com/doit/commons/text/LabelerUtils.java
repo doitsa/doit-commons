@@ -48,11 +48,43 @@ public class LabelerUtils {
 
             if (addressSplited.length == 4) {
                 country = addressSplited[3].substring(0, addressSplited[3].indexOf(" ("));
-
-                data.put(STATE_KEY, addressSplited[2].substring(addressSplited[2].indexOf("(") + 1, addressSplited[2].indexOf(")")));
-                data.put(CITY_KEY, addressSplited[1]);
                 data.put(COUNTRY_KEY, country);
-                data.put(ZIP_CODE_KEY, addressSplited[2].substring(addressSplited[2].indexOf(") ") + 2, addressSplited[2].length()));
+
+                if (!addressSplited[2].contains("(")) {
+                    // Alternative format: [street, city state(abbr), zipCode, country(code)]
+                    String cityStateSegment = addressSplited[1].trim();
+                    String stateAbbr = cityStateSegment.substring(
+                            cityStateSegment.indexOf("(") + 1, cityStateSegment.indexOf(")"));
+                    int parenIdx = cityStateSegment.indexOf(" (");
+                    String beforeParen = cityStateSegment.substring(0, parenIdx);
+                    int lastSpace = beforeParen.lastIndexOf(" ");
+                    String city;
+
+                    // Check if state name is two words by matching abbreviation initials
+                    if (lastSpace > 0 && stateAbbr.length() >= 2) {
+                        String secondToLastWord = beforeParen.substring(beforeParen.lastIndexOf(" ", lastSpace - 1) + 1, lastSpace);
+                        String lastWord = beforeParen.substring(lastSpace + 1);
+                        if (Character.toUpperCase(secondToLastWord.charAt(0)) == stateAbbr.charAt(0) && Character.toUpperCase(lastWord.charAt(0)) == stateAbbr.charAt(1)) {
+                            // Two-word state name (e.g., "New Jersey" for "NJ")
+                            int stateStart = beforeParen.lastIndexOf(" ", lastSpace - 1);
+                            city = stateStart > 0 ? beforeParen.substring(0, stateStart).trim() : beforeParen.substring(0, lastSpace).trim();
+                        } else {
+                            // Single-word state name
+                            city = beforeParen.substring(0, lastSpace).trim();
+                        }
+                    } else {
+                        city = beforeParen.substring(0, lastSpace).trim();
+                    }
+
+                    data.put(STATE_KEY, stateAbbr);
+                    data.put(CITY_KEY, city);
+                    data.put(ZIP_CODE_KEY, addressSplited[2].trim());
+                } else {
+                    // Standard format: [street, city, state(abbr) zipCode, country(code)]
+                    data.put(STATE_KEY, addressSplited[2].substring(addressSplited[2].indexOf("(") + 1, addressSplited[2].indexOf(")")));
+                    data.put(CITY_KEY, addressSplited[1]);
+                    data.put(ZIP_CODE_KEY, addressSplited[2].substring(addressSplited[2].indexOf(") ") + 2, addressSplited[2].length()));
+                }
             }
 
             if (addressSplited.length == 5) {

@@ -1,0 +1,76 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Alternative 4-Part Format Parsing Failure
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists
+  - **Scoped PBT Approach**: Scope the property to concrete failing cases — 4-part addresses where `addressSplited[2]` does not contain `"("` (zip code only in segment[2], state embedded in segment[1])
+  - Create test class `TestLabelerUtilsAlternativeFormat.java` in `src/test/java/br/com/doit/commons/text/`
+  - Write test method that calls `formatAddress` with alternative 4-part format addresses and asserts non-null result with correct field extraction:
+    - `"126 East Lincoln Avenue P.O Box 2000, Rahway New Jersey (NJ), 07065, United States (USA)"` → city=Rahway, state=NJ, zip=07065, country=United States
+    - `"500 Broadway, New York New York (NY), 10012, United States (USA)"` → city=New York, state=NY, zip=10012, country=United States
+    - `"100 Main St, Springfield Illinois (IL), 62704, United States (USA)"` → city=Springfield, state=IL, zip=62704, country=United States
+    - `"East Lincoln Avenue, Rahway New Jersey (NJ), 07065, United States (USA)"` → city=Rahway, state=NJ, zip=07065, country=United States (non-digit street start)
+  - The test assertions encode the Expected Behavior from design: result IS NOT NULL, city extracted from segment[1] before state name, state abbreviation from parentheses in segment[1], zipCode from segment[2], country from segment[3]
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (returns `null` because `StringIndexOutOfBoundsException` is caught — this proves the bug exists)
+  - Document counterexamples: `formatAddress("126 East Lincoln Avenue P.O Box 2000, Rahway New Jersey (NJ), 07065, United States (USA)", "USA")` returns `null` instead of a valid dictionary
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: 1.1, 1.2_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Standard Format and Other Inputs Unchanged
+  - **IMPORTANT**: Follow observation-first methodology
+  - **IMPORTANT**: These tests MUST PASS on unfixed code before any fix is applied
+  - Observe behavior on UNFIXED code for non-buggy inputs (cases where `addressSplited[2]` contains `"("` or address has different segment count):
+    - Observe: `formatAddress("911 North Davis Avenue, Cleveland, Mississippi (MS) 38732, United States (USA)", "USA")` returns dictionary with streetName=North Davis Avenue, streetNum=911, state=MS, city=Cleveland, country=United States, zipCode=38732
+    - Observe: `formatAddress("75 Adams Ave, Hauppauge, NY 11788", "USA")` returns dictionary with streetName=Adams Ave, streetNum=75
+    - Observe: `formatAddress(null, "USA")` returns `""`
+    - Observe: `formatAddress("5 Giralda Farms, Dodge Dr, Madison, NJ 07940", "USA")` returns `null` (unparseable 4-part without state abbreviation format)
+    - Observe: Denmark-formatted addresses use the Denmark-specific path
+  - Write property-based tests in `TestLabelerUtilsPreservation.java` capturing observed behavior patterns from Preservation Requirements:
+    - Standard 4-part format: for all addresses matching `[street, city, state(abbr) zipCode, country(code)]`, result has correct city, state, zip, country fields
+    - 3-part format: for addresses with 3 segments, only street fields are extracted
+    - Null input: returns empty string
+    - Denmark format: uses Denmark-specific path
+  - Verify tests PASS on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4_
+
+- [x] 3. Fix for alternative 4-part address format parsing
+  - [x] 3.1 Implement the fix
+    - In `LabelerUtils.java`, inside the `if (addressSplited.length == 4)` block:
+    - Extract country from `addressSplited[3]` first (common to both formats)
+    - Add format detection: `if (!addressSplited[2].contains("("))` to detect alternative format
+    - In the alternative branch: extract state abbreviation from parentheses in `addressSplited[1]`, extract city from `addressSplited[1]` (text before state name), use `addressSplited[2].trim()` as zip code
+    - Move existing standard format parsing into `else` branch (unchanged logic)
+    - _Bug_Condition: isBugCondition(input) where addressSplited.length = 4 AND NOT contains(addressSplited[2], "(")_
+    - _Expected_Behavior: result IS NOT NULL with city from segment[1] before state name, state abbreviation from parentheses in segment[1], zipCode from segment[2], country from segment[3]_
+    - _Preservation: Standard 4-part (segment[2] contains "("), 5-part, Denmark, and null inputs produce identical results to original_
+    - _Requirements: 1.1, 1.2, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4_
+
+  - [x] 3.2 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Alternative 4-Part Format Parsing
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior (non-null result with correct city, state, zip, country)
+    - When this test passes, it confirms the expected behavior is satisfied for all bug condition inputs
+    - Run `TestLabelerUtilsAlternativeFormat` test class
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - _Requirements: 2.1, 2.2_
+
+  - [x] 3.3 Verify preservation tests still pass
+    - **Property 2: Preservation** - Standard Format and Other Inputs Unchanged
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run `TestLabelerUtilsPreservation` test class
+    - Run existing `TestLabelerUtils` test class (original tests must also still pass)
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm all preservation tests still pass after fix (no regressions introduced)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Run full test suite: `mvn test`
+  - Ensure all tests pass including original `TestLabelerUtils`, new `TestLabelerUtilsAlternativeFormat`, and `TestLabelerUtilsPreservation`
+  - Ask the user if questions arise
