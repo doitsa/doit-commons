@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,8 +30,33 @@ import br.com.doit.commons.time.DateUtils;
  */
 class Cells {
     private static final String UNSUPPORTED_CELL_TYPE = "UNSUPPORTED_CELL_TYPE";
+    private static final String INVALID_CELL_TYPE = "INVALID_CELL_TYPE";
+    private static final Pattern POI_INVALID_TYPE_PATTERN = Pattern.compile("Cannot get a (\\S+) value from a (\\S+).*cell");
 
     private static final Messages messages = Messages.getMessages("br/com/doit/commons/excel/messages");
+
+    /**
+     * Traduz mensagens geradas pelo Apache POI para o idioma configurado no {@code Locale} padrão.
+     * O POI lança mensagens no padrão "Cannot get a {type} value from a {type} cell", que são
+     * interceptadas e substituídas pela chave {@code INVALID_CELL_TYPE}.
+     *
+     * @param poiMessage
+     *            A mensagem original lançada pelo POI.
+     * @return Retorna a mensagem traduzida ou a mensagem original caso não seja reconhecida.
+     */
+    static String translatePOIMessage(String poiMessage) {
+        if (poiMessage == null) {
+            return null;
+        }
+
+        Matcher matcher = POI_INVALID_TYPE_PATTERN.matcher(poiMessage);
+
+        if (matcher.find()) {
+            return messages.format(INVALID_CELL_TYPE, matcher.group(2), matcher.group(1));
+        }
+
+        return poiMessage;
+    }
 
     private static final Map<String, Boolean> BOOLEAN_MAPPING;
 
