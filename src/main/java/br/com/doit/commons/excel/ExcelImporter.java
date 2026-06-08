@@ -101,7 +101,7 @@ public class ExcelImporter {
         try {
             return Cells.toObject(cell, config.get(columnName));
         } catch (Exception exception) {
-            String message = ExcelErrorMessageFormatter.format(exception.getMessage(), cell);
+            String message = ExcelErrorMessageFormatter.format(Cells.translatePOIMessage(exception.getMessage()), cell);
 
             throw new ExcelImporterException(message, exception);
         }
